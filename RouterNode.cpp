@@ -5,29 +5,62 @@
 #include "RouterNode.h"
 #include "strlib.h"
 
-RouteResult* RouterNode::findRoute(string s, paramsList *params) {
-    RouteResult ret = {};
-    RouteResult *res;
+
+RouteResult *RouterNode::getNodeResult(string s, paramsList *params) {
+    RouteResult *res = new RouteResult(params);
+
     if (s == uri_) {
-        ret.controller_id = controller_id;
-    } else if (children.size() > 0 && startsWith(s, uri_)) {
-        //http://en.cppreference.com/w/cpp/language/range-for
-        for (auto &&i : children) {
-            std::string temp = s.substr(uri_.length());
-            std::cout << " Looking in Child for " << temp << endl;
-            res = i->findRoute(temp);
-            if (res->controller_id > 0) {
-                return res;
-            }
-        }
+        res->controller_id = controller_id;
+        return res;
+    } else if (startsWith(s, uri_)) {
+        // set the restString value and return
+        res->restString = s.substr(uri_.length());
+        return res;
+    } else {
+        // Not exact match and no children or search uri is NOT substring of uri_
+        std::cout << " RouterNode::getNodeResult returning nullptr " << endl;
+        res->isEmpty = true;
+
+        std::cout << " RouterNode::getNodeResult result isEmpty: " << res->isEmpty << endl;
+        return res;
 
     }
-
-    return &ret;
 }
 
-RouterNode* RouterNode::addChild(string uri, int id){
-    RouterNode* child = new RouterNode(uri, id);
+RouteResult *RouterNode::findRoute(string s, paramsList *params) {
+
+    //std::cout << " Entered  RouterNode::findRoute Node: " << uri_ << " looking for: " << s << endl;
+    RouteResult *res = getNodeResult(s, params);
+    std::cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
+    // What is result NOT found at all?
+
+    // result can be one of 3:
+    // nullptr - nothing at all found meaning there is no need to look in children.
+    // result with empty restString which means there is nothing else left to match, just return in
+    // a result with restString in which case keep looking in children using restString as input
+
+    if (res->isEmpty == true) {
+        std::cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty << endl;
+        return res;
+    } else if (res->restString.length() == 0) {
+        std::cout << " RouterNode::findRoute Result found. controller_id:" << res->controller_id << endl;
+        return res;
+    } else if (children.size() > 0) {
+        for (auto &&i : children) {
+            std::cout << " Looking in Child for " << res->restString << endl;
+            auto cres = i->findRoute(res->restString, params);
+            if (!cres->isEmpty && cres->restString.length() == 0) {
+                return cres;
+            }
+        }
+    }
+
+
+    return new RouteResult(params);
+}
+
+RouterNode *RouterNode::addChild(string uri, int id) {
+    RouterNode *child = new RouterNode(uri, id);
     children.push_back(child);
     return child;
 }

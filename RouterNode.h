@@ -9,10 +9,37 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <chrono>
+#include <utility>
 
 
 using namespace std;
 
+
+template<typename TimeT = std::chrono::milliseconds>
+struct measure {
+    template<typename F, typename ...Args>
+    static typename TimeT::rep execution(F &&func, Args &&... args) {
+        auto start = std::chrono::steady_clock::now();
+        std::forward<decltype(func)>(func)(std::forward<Args>(args)...);
+        auto duration = std::chrono::duration_cast<TimeT>
+                (std::chrono::steady_clock::now() - start);
+        return duration.count();
+    }
+};
+
+
+typedef std::chrono::high_resolution_clock::time_point TimeVar;
+
+#define duration(a) std::chrono::duration_cast<std::chrono::nanoseconds>(a).count()
+#define timeNow() std::chrono::high_resolution_clock::now()
+
+template<typename F, typename... Args>
+double funcTime(F func, Args &&... args) {
+    TimeVar t1 = timeNow();
+    func(std::forward<Args>(args)...);
+    return duration(timeNow() - t1);
+}
 
 class RouteParam {
 
@@ -26,19 +53,26 @@ public:
 typedef vector<RouteParam *> paramsList;
 
 struct RouteResult {
-    paramsList* params;
+
+    bool isEmpty;
+    paramsList *params;
     int controller_id;
-    ~RouteResult(){
-        if(params != nullptr) {
-            cout << " RouteResult destructor has params "  << endl;
+    string restString = "";
+    RouteResult(){}
+    RouteResult(paramsList *p, int cid = 0, string rest = "", bool empty = false) : controller_id(cid), restString(rest), isEmpty(empty) {
+        params = p;
+    }
+
+    ~RouteResult() {
+        if (params != nullptr) {
+            cout << " RouteResult destructor has params " << endl;
             params->clear();
             params = nullptr;
         } else {
-            cout << " RouteResult destructor has NO params "  << endl;
+            //cout << " RouteResult destructor has NO params " << endl;
         }
     };
 };
-
 
 
 
@@ -48,19 +82,33 @@ protected:
 
     string uri_;
 
+    string originalUriPattern;
+
     int controller_id;
 
     vector<RouterNode *> children;
 
+    // This is where the work is done to match uri for this node, possibly extract router params and
+    // return a result.
+    // result may contain controller_id in which case the result is found
+    // or it may append extracted route params to params, generate the "restString" and return
+    // result with params and restString, in which case children will be searched for a match for the restString
+    virtual RouteResult *getNodeResult(string uri, paramsList *params = new paramsList());
+
 public :
     RouterNode(std::string uri, int id) : uri_(uri), controller_id(id) {}
 
-    virtual RouterNode* addChild(string uri, int id);
+    virtual RouterNode *addChild(string uri, int id);
 
-    virtual RouteResult* findRoute(string uri, paramsList *params =  new paramsList());
+    virtual RouteResult *findRoute(string uri, paramsList *params = new paramsList());
 
-    ~RouterNode(){
-        children.clear();
+    ~RouterNode() {
+        if (children.size() > 0) {
+            cout << " RouterNode " << uri_ << " destructor called " << endl; // never called?
+            children.clear();
+        }
+
+
     }
 
 };

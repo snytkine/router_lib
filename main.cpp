@@ -7,8 +7,8 @@
 using namespace std;
 
 
-void findRoute(RouterNode *rn, string uri){
-    RouteResult *res = rn->findRoute(uri);
+void findRoute(RouterNode<int> *rn, string uri){
+    RouteResult<int> *res = rn->findRoute(uri);
     cout << "Controller Found: " << res->controller_id << endl;
 }
 
@@ -26,13 +26,13 @@ int main() {
     //double diff;
     //start = clock();
 
-    RouterNode *rn = new RouterNode("/api", 3);
+    RouterNode<int> *rn = new RouterNode<int>("/api", 3);
     rn->addChild("/v1", 5);
     rn->addChild("/v2", 6)->addChild("/users", 7);
 
 
 
-    RouteResult *res = rn->findRoute("/api/v2/users");
+    RouteResult<int> *res = rn->findRoute("/api/v2/users");
     /*if(res->controller_id > 0){
         cout << "Controller Found: " << res->controller_id << endl;
     } else {
@@ -41,7 +41,8 @@ int main() {
 
     //int t = funcTime(findRoute, rn, "/api/v2/users");
 
-    std::cout<<"norm: "<< funcTime(findRoute, rn, "/api/v2/users") <<"\n";
+    //std::cout<<"norm: "<< funcTime(findRoute, rn, "/api/v2/users") <<"\n";
+    //findRoute(rn, "/api/v2/users");
 
 
     //std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();

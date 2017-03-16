@@ -5,12 +5,13 @@
 #include "RouterNode.h"
 #include "strlib.h"
 
+template <class T>
+RouteResult<T> *RouterNode<T>::getNodeResult(string s, paramsList *params) {
 
-RouteResult *RouterNode::getNodeResult(string s, paramsList *params) {
-    RouteResult *res = new RouteResult(params);
+    RouteResult<T> *res = new RouteResult<T>(params);
 
     if (s == uri_) {
-        res->controller_id = controller_id;
+        res->controller_id = controller;
         return res;
     } else if (startsWith(s, uri_)) {
         // set the restString value and return
@@ -27,17 +28,12 @@ RouteResult *RouterNode::getNodeResult(string s, paramsList *params) {
     }
 }
 
-RouteResult *RouterNode::findRoute(string s, paramsList *params) {
+template <class T>
+RouteResult<T> *RouterNode<T>::findRoute(string s, paramsList *params) {
 
     //std::cout << " Entered  RouterNode::findRoute Node: " << uri_ << " looking for: " << s << endl;
-    RouteResult *res = getNodeResult(s, params);
-    std::cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
-    // What is result NOT found at all?
-
-    // result can be one of 3:
-    // nullptr - nothing at all found meaning there is no need to look in children.
-    // result with empty restString which means there is nothing else left to match, just return in
-    // a result with restString in which case keep looking in children using restString as input
+    RouteResult<T> *res = getNodeResult(s, params);
+    //std::cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
 
     if (res->isEmpty == true) {
         std::cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty << endl;
@@ -56,11 +52,12 @@ RouteResult *RouterNode::findRoute(string s, paramsList *params) {
     }
 
 
-    return new RouteResult(params);
+    return new RouteResult<T>(params);
 }
 
-RouterNode *RouterNode::addChild(string uri, int id) {
-    RouterNode *child = new RouterNode(uri, id);
+template <class T>
+RouterNode<T> *RouterNode<T>::addChild(string uri, T id) {
+    RouterNode<T> *child = new RouterNode<T>(uri, id);
     children.push_back(child);
     return child;
 }

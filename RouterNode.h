@@ -52,18 +52,21 @@ public:
 
 typedef vector<RouteParam *> paramsList;
 
-struct RouteResult {
+template <typename T>
+class RouteResult {
 
+public:
     bool isEmpty;
     paramsList *params;
-    int controller_id;
+    T controller_id;
     string restString = "";
     RouteResult(){}
-    RouteResult(paramsList *p, int cid = 0, string rest = "", bool empty = false) : controller_id(cid), restString(rest), isEmpty(empty) {
+    RouteResult(paramsList *p, T cid = 0, string rest = "", bool empty = false) : restString(rest), isEmpty(empty) {
         params = p;
+        controller_id = cid;
     }
 
-    ~RouteResult() {
+    ~RouteResult<T>() {
         if (params != nullptr) {
             cout << " RouteResult destructor has params " << endl;
             params->clear();
@@ -74,8 +77,10 @@ struct RouteResult {
     };
 };
 
+template class RouteResult<int>;
 
 
+template <typename T>
 class RouterNode {
 
 protected:
@@ -84,23 +89,25 @@ protected:
 
     string originalUriPattern;
 
-    int controller_id;
+    T controller;
 
-    vector<RouterNode *> children;
+    vector<RouterNode<T> *> children;
 
     // This is where the work is done to match uri for this node, possibly extract router params and
     // return a result.
     // result may contain controller_id in which case the result is found
     // or it may append extracted route params to params, generate the "restString" and return
     // result with params and restString, in which case children will be searched for a match for the restString
-    virtual RouteResult *getNodeResult(string uri, paramsList *params = new paramsList());
+    virtual RouteResult<T> *getNodeResult(string uri, paramsList *params = new paramsList());
 
 public :
-    RouterNode(std::string uri, int id) : uri_(uri), controller_id(id) {}
+    RouterNode<T>(std::string uri, T id) : uri_(uri) {
+        controller = id;
+    }
 
-    virtual RouterNode *addChild(string uri, int id);
+    virtual RouterNode<T> *addChild(string uri, T id);
 
-    virtual RouteResult *findRoute(string uri, paramsList *params = new paramsList());
+    virtual RouteResult<T> *findRoute(string uri, paramsList *params = new paramsList());
 
     ~RouterNode() {
         if (children.size() > 0) {
@@ -113,5 +120,5 @@ public :
 
 };
 
-
+template class RouterNode<int>;
 #endif //ROUTER_ROUTER_NODE_H

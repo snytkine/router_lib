@@ -5,6 +5,7 @@
 
 
 using namespace std;
+using namespace router_lib;
 
 
 void findRoute(RouterNode<int> *rn, string uri){
@@ -32,16 +33,16 @@ int main() {
 
 
 
-    RouteResult<int> *res = rn->findRoute("/api/v2/users");
+    //RouteResult<int> *res = rn->findRoute("/api/v2/users");
     /*if(res->controller_id > 0){
         cout << "Controller Found: " << res->controller_id << endl;
     } else {
         cout << "Controller NOT FOUND " << res->controller_id << endl;
     }*/
 
-    //int t = funcTime(findRoute, rn, "/api/v2/users");
+    int t = funcTime(findRoute, rn, "/api/v2/users");
 
-    //std::cout<<"norm: "<< funcTime(findRoute, rn, "/api/v2/users") <<"\n";
+    std::cout<<"norm: "<< t <<"\n";
     //findRoute(rn, "/api/v2/users");
 
 

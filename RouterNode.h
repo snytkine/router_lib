@@ -17,9 +17,13 @@ namespace router_lib {
     using namespace std;
 
 
+    enum NODE_TYPE {NODE_CTRL, NODE_NC, NODE_PATH_PARAM, NODE_FUNC_PARAM};
+
     static const string PATH_SEPARATOR = "/";
     static const string PLACEHOLDER_START = "{";
     static const string PLACEHOLDER_END = "}";
+    //const uint8_t CTRL_NODE = 1;
+    //const uint8_t NC_NODE = 1;
 
 
     template<typename TimeT = std::chrono::milliseconds>
@@ -96,10 +100,6 @@ namespace router_lib {
 
         string uri_;
 
-        string originalUriPattern;
-
-        T controller;
-
         vector<RouterNode<T> *> children;
 
         // This is where the work is done to match uri for this node, possibly extract router params and
@@ -115,15 +115,27 @@ namespace router_lib {
 
     public :
 
+        T controller;
+        NODE_TYPE TYPE;
+        const string origUriPattern;
+
         string controller_name;
 
-        RouterNode<T>(std::string uri, T id, string name = "") : uri_(uri), controller_name(name) {
+        RouterNode<T>(std::string uri, T id, string name = "") : uri_(uri), origUriPattern(uri), controller_name(name), TYPE(NODE_CTRL) {
             controller = id;
         }
+
+
+        RouterNode<T>(std::string uri): uri_(uri), origUriPattern(uri), TYPE(NODE_NC){}
 
         virtual RouterNode<T> *addChild(string uri, T id);
 
         virtual RouterNode<T> *addRoute(string uri, T controller, string ctrl_name = "");
+
+        // This one if for adding non-controller node, this node is only
+        // used for holding section of the uri but does not have controller associated with it.
+
+        virtual RouterNode<T> *addRoute(string uri);
 
         virtual RouteResult<T> *findRoute(string uri, paramsList *params = new paramsList());
 
@@ -138,7 +150,13 @@ namespace router_lib {
 
     };
 
+
+
     template
     class RouterNode<int>;
+
+    //template <typename T>
+    //RouterNode<T>* emptyNode();
+
 }
 #endif //ROUTER_ROUTER_NODE_H

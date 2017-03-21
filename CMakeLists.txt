@@ -3,5 +3,5 @@ project(router)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp strlib.h strlib.cpp RouterNode.cpp RouterNode.h PathParamNode.cpp PathParamNode.h)
+set(SOURCE_FILES main.cpp strlib.h strlib.cpp RouterNode.cpp RouterNode.h PathParamNode.cpp PathParamNode.h node_result.cpp node_result.h)
 add_executable(router ${SOURCE_FILES})

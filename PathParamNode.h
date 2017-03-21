@@ -64,8 +64,7 @@ namespace router_lib {
     };
 
 
-    template
-    class PathParamNode<int>;
+    template class router_lib::PathParamNode<int>;
 }
 
 

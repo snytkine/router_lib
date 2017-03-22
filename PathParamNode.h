@@ -26,13 +26,9 @@ namespace router_lib {
         }
 
         PathParamNode(string uri) : RouterNode<T>(uri) {
-            //NODE_TYPE TYPE = NODE_PATH_PARAM;
             END_WITH_SLASH = uri.back() == '/';
             setParamName(uri.substr(1, uri.length() - 3));
         }
-
-
-        void setParamName(string pn);
 
         string getParamName() const;
 
@@ -42,6 +38,8 @@ namespace router_lib {
         bool END_WITH_SLASH;
 
         string paramName_;
+
+        void setParamName(string pn);
         //string uri_;
 
         //vector<RouterNode<T> *> children;
@@ -53,9 +51,7 @@ namespace router_lib {
         // result with params and restString, in which case children will be searched for a match for the restString
         RouteResult <T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
-        string rest(const string s) const;
-
-
+        //virtual string rest(const string s) const;
 
     };
 

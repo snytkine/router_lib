@@ -5,12 +5,13 @@
 #include "RouterNode.h"
 #include "strlib.h"
 #include "PathParamNode.h"
-#include "node_result.h"
+#include "factory.h"
+#include "constants.h"
 
 namespace router_lib {
 
-    template<typename T>
-    string RouterNode<T>::rest(const string s) const {
+    //template<typename T>
+    //string RouterNode<T>::rest(const string s) const {
 
         // todo check that len of s must be > len of origUriPattern? Do we need this check?
         // is it possible to pass shorter string here?
@@ -18,12 +19,12 @@ namespace router_lib {
         // cout << "ENTERED RouterNode::rest with s=[" << s << "] origUriPattern=" << origUriPattern << endl;
 
 
-        string ret = s.substr(s.find("/") + 1, string::npos);
+        //string ret = s.substr(s.find(PATH_SEPARATOR) + 1, string::npos);
 
         // cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] in NODE  " << controller_name << endl;
 
-        return ret;
-    }
+        //return ret;
+    //}
 
     template<class T>
     RouteResult<T> *RouterNode<T>::getNodeResult(const string s, paramsList *params) const {
@@ -40,7 +41,7 @@ namespace router_lib {
         } else if (origUriPattern == s.substr(0, s.find(PATH_SEPARATOR) + 1)) {
             // set the restString value and return
             // cout << "          getNodeResult startsWith [" << origUriPattern << "] search " << s << endl;
-            res->restString = rest(s);
+            res->restString = tail_(s);
             return res;
         } else {
             // Not exact match and no children or search uri is NOT substring of origUriPattern
@@ -144,7 +145,7 @@ namespace router_lib {
 
         if (sepPos != string::npos) {
             nodeUri = uri.substr(0, sepPos + 1);
-            restUri = rest(uri);//uri.substr(sepPos + 1, string::npos);
+            restUri = tail_(uri);//uri.substr(sepPos + 1, string::npos);
         } else {
             nodeUri = uri;
         }
@@ -206,10 +207,10 @@ namespace router_lib {
         // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
         if (restUri.empty()) {
-            newNode = createRouterNode(nodeUri, id, name); //new RouterNode<T>(nodeUri, id, name);
+            newNode = router_lib::createRouterNode<T>(nodeUri, id, name); //new RouterNode<T>(nodeUri, id, name);
             // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
         } else {
-            newNode = createRouterNode(nodeUri); //new RouterNode<T>(nodeUri);
+            newNode = router_lib::createRouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
             // cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
             newNode->addRoute(restUri, id, name);
         }

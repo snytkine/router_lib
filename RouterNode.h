@@ -17,11 +17,6 @@
 namespace router_lib {
     using namespace std;
 
-    static const string PATH_SEPARATOR = "/";
-    static const string PLACEHOLDER_START = "{";
-    static const string PLACEHOLDER_END = "}";
-
-
     template<typename T>
     class RouterNode {
 
@@ -69,6 +64,7 @@ namespace router_lib {
             }
         }
 
+        //virtual string rest(const string s) const;
 
     protected:
         T *controller;
@@ -86,7 +82,7 @@ namespace router_lib {
         // result with params and restString, in which case children will be searched for a match for the restString
         virtual RouteResult<T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
-        virtual string rest(const string s) const;
+
 
     };
 

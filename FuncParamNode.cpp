@@ -1,42 +1,30 @@
 //
-// Created by Snytkine, Dmitri (CORP) on 3/18/17.
+// Created by Snytkine, Dmitri (CORP) on 3/22/17.
 //
 
+#include "node_result.h"
 #include "RouterNode.h"
-#include "PathParamNode.h"
 #include "constants.h"
+#include "FuncParamNode.h"
+
 
 namespace router_lib {
 
+    using namespace std;
+
     template<class T>
-    void PathParamNode<T>::setParamName(string pn) {
+    void FuncParamNode<T>::setParamName(string pn) {
         paramName_ = pn;
     }
 
     template<class T>
-    string PathParamNode<T>::getParamName() const {
+    string FuncParamNode<T>::getParamName() const {
         return paramName_;
     }
 
-    //template<class T>
-    //string PathParamNode<T>::rest(const string s) const {
-        // cout << "Entered PathParamNode::rest() with s=" << s << " IS_SLASH_PATH: " << END_WITH_SLASH << endl;
-
-        // If this node is for NON_SLASH uri (as in /usr/{id} ) then this function will not be called because
-        // the logic will return NULL
-        // If this NODE is SLASH path but looking for non-slash url this function will also NOT be called
-        // this is a case when this node is for {id}/ but looking for something like /usr/55
-        // This means that this function will be called ONLY if this node END_WITH_SLASH and s has slash
-        // need to get everything after the slash!
-        //
-        //string ret= s.substr(s.find(PATH_SEPARATOR) + 1, string::npos );
-        // cout << "PathParamNode::rest ret[" << ret << "] result for [" << s << "]" << endl;
-
-        //return ret;
-    //}
 
     template<class T>
-    RouteResult<T> *PathParamNode<T>::getNodeResult(const string uri, paramsList *params) const {
+    RouteResult<T> *FuncParamNode<T>::getNodeResult(const string uri, paramsList *params) const {
 
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
         // If origUriPattern ends with slash
@@ -60,6 +48,13 @@ namespace router_lib {
 
                 return new EmptyResult<T>();
             } else {
+
+                // LOGIC
+                // uri must end with ")/"
+                // uri must start with prefix
+                // extract everything from prefix to ")"
+
+
                 // cout << "URI HAS SLASH" << endl;
                 // extract param manually
                 RouteParam *rp = new RouteParam(paramName_, uri.substr(0, sepPos));
@@ -86,6 +81,11 @@ namespace router_lib {
 
                 return new EmptyResult<T>();
             } else {
+                // LOGIC:
+                // uri must end with ")"
+                // uri must start with prefix
+                // extract everything from prefix to ")"
+
                 // cout << "URI ALSO DOES NOT HAVE SLASH" << endl;
                 RouteParam *rp = new RouteParam(paramName_, uri);
                 params->push_back(rp);
@@ -99,5 +99,4 @@ namespace router_lib {
 
 
     }
-
 }

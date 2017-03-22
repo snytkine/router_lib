@@ -16,7 +16,7 @@ namespace router_lib {
 
     public:
 
-        PathParamNode(string uri, T id, string name = "") : RouterNode<T>::RouterNode(uri, id, name, NODE_PATH_PARAM) {
+        PathParamNode(string uri, T &id, string name = "") : RouterNode<T>::RouterNode(uri, &id, name) {
 
             END_WITH_SLASH = uri.back() == '/';
             string pn = uri.substr(1, uri.length() - 3);
@@ -25,7 +25,7 @@ namespace router_lib {
             // cout << "CREATED PathParamNode paramName=" << paramName << " TYPE=" << kind() << endl;
         }
 
-        PathParamNode(string uri) : RouterNode<T>(uri, NODE_NC) {
+        PathParamNode(string uri) : RouterNode<T>(uri) {
             //NODE_TYPE TYPE = NODE_PATH_PARAM;
             END_WITH_SLASH = uri.back() == '/';
             setParamName(uri.substr(1, uri.length() - 3));
@@ -35,10 +35,6 @@ namespace router_lib {
         void setParamName(string pn);
 
         string getParamName();
-
-        /*T getController(){
-            return controller;
-        }*/
 
 
     protected:

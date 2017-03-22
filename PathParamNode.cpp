@@ -71,7 +71,7 @@ namespace router_lib {
                 // cout << "CP-4" << endl;
                 if (res->restString.empty()) {
                     // cout << "CP-5" << endl;
-                    res->controller_id = RouterNode<T>::getController();
+                    res->controller = RouterNode<T>::getController();
                 } else {
                     // cout << "CP-6" << " rest was: " << res->restString << endl;
                 }

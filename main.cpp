@@ -10,7 +10,7 @@ using namespace router_lib;
 
 void findRoute(RouterNode<int> *rn, string uri){
     RouteResult<int> *res = rn->findRoute(uri);
-    cout << "Controller Found: " << res->controller_id << endl;
+    cout << "Controller Found: " << *res->controller << endl;
 }
 
 
@@ -39,43 +39,58 @@ int main() {
 
     RouterNode<int> *rootNode = new RouterNode<int>();
     //rootNode->addRoute("api/v1_0/users", 1, "users");
+    int route2 = 2;
+    int route3 = 4;
+    int route4 = 4;
+
+    int route5 = 5;
+    int route6 = 6;
+    int route7 = 7;
+    int route8 = 8;
+    int route9 = 9;
+    int route10 = 10;
+    int route11 = 11;
+    int route12 = 12;
+
+    try {
+        rootNode->addRoute("api/v2_0/users/user/", route5, "user");
+        rootNode->addRoute("myapi/v1_0/users/user/", route6, "userX");
+
+        rootNode->addRoute("api/v1_0/users/user", route4, "userY");
 
 
-    rootNode->addRoute("api/v2_0/users/user/", 5, "user");
-    rootNode->addRoute("myapi/v1_0/users/user/", 6, "user");
 
-    rootNode->addRoute("api/v1_0/users/user", 4, "user");
+        rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
+        rootNode->addRoute("api/v1_0/users/user/", route5, "user");
 
-    rootNode->addRoute("api/v1_0/users/user/", 2, "user");
+        rootNode->addRoute("api/v1_0/user({id})/", route8, "users/");
 
-    rootNode->addRoute("api/v1_0/users/user/123", 3, "user123");
+        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "api/v1_0/items/{item_id}/ok.get");
+        rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12, "api/v1_0/items/{item_id}/{user_id}/ok.get");
 
-    rootNode->addRoute("api/v1_0/user({id})/", 8, "users/");
-
-    rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", 11, "api/v1_0/items/{item_id}/ok.get");
-    rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", 12, "api/v1_0/items/{item_id}/{user_id}/ok.get");
-
-    rootNode->addRoute("api/v1_0/items/{item_id}/", 9, "api/v1_0/items/{item_id}/");
+        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "api/v1_0/items/{item_id}/");
 
 
-    cout << '\n' << '\n' << "=================" << '\n' << '\n' << endl;
-    RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
-    //RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
-    //RouteResult<int> *res3 = rootNode->findRoute("/api/v1_0/users");
-    //RouteResult<int> *res4 = rootNode->findRoute("/api/v1_0/users/");
-    //RouteResult<int> *res5 = rootNode->findRoute("/api/v1_0/items/544/");
-    //RouteResult<int> *res6 = rootNode->findRoute("/api/v1_0/items/563/ok.get");
-    RouteResult<int> *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
+        cout << '\n' << '\n' << "=================" << '\n' << '\n' << endl;
+        //RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
+        RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
+        RouteResult<int> *res3 = rootNode->findRoute("/api/v1_0/users");
+        //RouteResult<int> *res4 = rootNode->findRoute("/api/v1_0/users/");
+        //RouteResult<int> *res5 = rootNode->findRoute("/api/v1_0/items/544/");
+        //RouteResult<int> *res6 = rootNode->findRoute("/api/v1_0/items/563/ok.get");
+        RouteResult<int> *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
 
-    cout << "RES route /api/v3_0/users/user/123: " << res->toString() << endl;
-    //cout << "RES route /api/v1_0/users/user: " << res2->controller_id << endl;
-    //cout << "RES route /api/v1_0/users: " << res3->controller_id << endl;
-    //cout << "RES route /api/v1_0/users/: " << res4->controller_id << endl;
-    //cout << "RES-5 route /api/v1_0/items/55/: " << res5->controller_id << endl;
-    //cout << "RES-6 route /api/v1_0/items/563/ok.get: " << res6->toString() << endl;
-    cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << endl;
+        //cout << "RES route /api/v3_0/users/user/123: " << res->toString() << endl;
+        cout << "RES2 route /api/v1_0/users/user: " << res2->toString() << endl;
+        cout << "RES3 route /api/v1_0/users: " << res3->toString() << endl;
+        //cout << "RES route /api/v1_0/users/: " << res4->controller_id << endl;
+        //cout << "RES-5 route /api/v1_0/items/55/: " << res5->controller_id << endl;
+        //cout << "RES-6 route /api/v1_0/items/563/ok.get: " << res6->toString() << endl;
+        cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << endl;
 
-
+    } catch (...){
+        cout << "SOME EXCEPTION" << endl;
+    }
 
     //string myTest = "blahblah/cool";
     /*string myuri = "{id}/";
@@ -97,11 +112,11 @@ int main() {
         cout << "Controller NOT FOUND " << res->controller_id << endl;
     }*/
 
-    int t = funcTime(findRoute, rootNode, "/api/v1_0/items/77777/264/ok.get");
+    //int t = funcTime(findRoute, rootNode, "/OKapi/v1_0/items/77777/264/ok.get");
     //int t2 = funcTime(findRoute, rn, "/api/v2");
     //int t3 = funcTime(findRoute, rn, "/api/v2/users");
 
-    std::cout<<"t1: "<< t <<"\n";
+    //std::cout<<"t1: "<< t <<"\n";
     //std::cout<<"t2: "<< t2 <<"\n";
     //std::cout<<"t3: "<< t2 <<"\n";
     //findRoute(rn, "/api/v2/users");

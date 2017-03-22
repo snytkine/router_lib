@@ -29,26 +29,27 @@ namespace router_lib {
     public:
 
         paramsList *params;
-        T controller_id;
+        T *controller;
         string restString = "";
 
         RouteResult() {}
 
-        RouteResult(paramsList *p, T cid = 0, string rest = "") : restString(rest) {
+        RouteResult(paramsList *p, T *cid = nullptr, string rest = "") : restString(rest), controller(cid) {
             params = p;
-            controller_id = cid;
         }
 
 
-        virtual bool isEmpty() {
-            return false;
-        }
+        virtual bool isEmpty();
 
         virtual string toString() {
             string ret = "RouteResult isEmpty: ";
             ret = ret + ((isEmpty()) ? "TRUE" : "FALSE");
             ret = ret + " CID=";
-            ret = ret + to_string(controller_id);
+            if (controller != nullptr) {
+                ret = ret + to_string(*controller);
+            } else {
+                ret = ret + " NO CONTROLLER ";
+            }
             ret = ret + "\n PARAMS:";
             if (params != nullptr && params->size() > 0) {
                 for (auto &&i : *params) {
@@ -67,6 +68,7 @@ namespace router_lib {
                 cout << " RouteResult destructor has params " << endl;
                 params->clear();
                 params = nullptr;
+                delete controller;
             } else {
                 //cout << " RouteResult destructor has NO params " << endl;
             }
@@ -76,11 +78,15 @@ namespace router_lib {
 
     template<typename T>
     class EmptyResult : public RouteResult<T> {
-
         bool isEmpty() {
             return true;
         }
     };
+
+    template<typename T>
+    bool RouteResult<T>::isEmpty() {
+        return false;
+    }
 
 }
 

@@ -17,11 +17,6 @@
 namespace router_lib {
     using namespace std;
 
-
-    enum NODE_TYPE {
-        NODE_CTRL, NODE_NC, NODE_PATH_PARAM, NODE_FUNC_PARAM
-    };
-
     static const string PATH_SEPARATOR = "/";
     static const string PLACEHOLDER_START = "{";
     static const string PLACEHOLDER_END = "}";
@@ -61,22 +56,22 @@ namespace router_lib {
 
     public :
 
-        RouterNode<T>(string uri, T id, string name = "", NODE_TYPE t = NODE_CTRL) : origUriPattern(uri),
+        RouterNode<T>(string uri, T* ctrl, string name = "") : origUriPattern(uri),
                                                                                      controller_name(name),
-                                                                                     controller(id), TYPE(t) {
+                                                                                     controller(ctrl) {
             cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
         }
 
 
-        RouterNode<T>() : origUriPattern("/"), controller_name("ROOT"), TYPE(NODE_NC) {}
+        RouterNode<T>() : origUriPattern("/"), controller_name("ROOT") {}
 
-        RouterNode<T>(std::string uri, NODE_TYPE t = NODE_NC) : origUriPattern(uri), TYPE(t) {}
+        RouterNode<T>(std::string uri) : origUriPattern(uri) {}
 
-        RouterNode<T> *createRouterNode(string nodeUri, T id, string name);
+        RouterNode<T> *createRouterNode(string nodeUri, T &id, string name);
 
         RouterNode<T> *createRouterNode(string nodeUri);
 
-        virtual T getController(){
+        virtual T* getController(){
             return controller;
         }
 
@@ -84,9 +79,15 @@ namespace router_lib {
             return "";
         }
 
-        virtual NODE_TYPE kind();
+        void setController(T* ctrl){
+            controller = ctrl;
+        }
 
-        virtual RouterNode<T> *addRoute(string uri, T controller, string ctrl_name = "");
+        bool empty(){
+            return controller == nullptr;
+        }
+
+        virtual RouterNode<T> *addRoute(string uri, T &controller, string ctrl_name = "");
 
         virtual RouteResult<T> *findRoute(string uri, paramsList *params = new paramsList());
 
@@ -99,11 +100,11 @@ namespace router_lib {
 
 
     protected:
-        T controller;
-        NODE_TYPE TYPE;
+        T* controller = nullptr;
 
         string controller_name;
-        string origUriPattern = "";
+
+        string origUriPattern;
 
         vector<RouterNode<T> *> children;
 
@@ -113,8 +114,6 @@ namespace router_lib {
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
         virtual RouteResult<T> *getNodeResult(string uri, paramsList *params = new paramsList());
-
-        //virtual RouteParam *extractParam();
 
         virtual string rest(const string s);
 

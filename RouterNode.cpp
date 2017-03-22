@@ -17,12 +17,12 @@ namespace router_lib {
         // todo check that len of s must be > len of origUriPattern? Do we need this check?
         // is it possible to pass shorter string here?
 
-        // cout << "ENTERED RouterNode::rest with s=[" << s << "] origUriPattern=" << origUriPattern << endl;
+        cout << "ENTERED RouterNode::rest with s=[" << s << "] origUriPattern=" << origUriPattern << endl;
 
 
         string ret= s.substr(s.find("/") + 1, string::npos );
 
-        // cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] in NODE  " << controller_name << endl;
+        cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] in NODE  " << controller_name << endl;
 
         return ret;
     }
@@ -30,24 +30,24 @@ namespace router_lib {
     template<class T>
     RouteResult<T> *RouterNode<T>::getNodeResult(string s, paramsList *params) {
 
-        // cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
+        cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
 
         RouteResult<T> *res = new RouteResult<T>(params);
 
         if (s == origUriPattern) {
-            // cout << "           getNodeResult MATCH [" << origUriPattern << "] matched " << s << endl;
-            res->controller_id = controller;
+            cout << "           getNodeResult MATCH [" << origUriPattern << "] matched " << s << endl;
+            res->controller = controller;
             return res;
 
         } else if (origUriPattern == s.substr(0, s.find(PATH_SEPARATOR) + 1)) {
             // set the restString value and return
-            // cout << "          getNodeResult startsWith [" << origUriPattern << "] search " << s << endl;
+            cout << "          getNodeResult startsWith [" << origUriPattern << "] search " << s << endl;
             res->restString = rest(s);
             return res;
         } else {
             // Not exact match and no children or search uri is NOT substring of origUriPattern
 
-            // cout << " RouterNode::getNodeResult returning empty result: " << endl;
+            cout << " RouterNode::getNodeResult returning empty result: " << endl;
 
             return new EmptyResult<T>();
 
@@ -63,65 +63,67 @@ namespace router_lib {
     template<class T>
     RouteResult<T> *RouterNode<T>::findRoute(string s, paramsList *params) {
 
-        //std::// cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
+        //std::cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
         RouteResult<T> *res = getNodeResult(s, params);
-        //std::// cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
+        //std::cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
 
         if (res->isEmpty() == true) {
-            // cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << endl;
+            cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << endl;
             return res;
         } else if (res->restString.length() == 0) {
-            // cout << " RouterNode::findRoute Result found. controller_id:" << res->controller_id << endl;
+            cout << " RouterNode::findRoute Result found. controller_id:" << *res->controller << endl;
             return res;
         } else if (children.size() > 0) {
             for (auto &&i : children) {
-                // cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << endl;
+                cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << endl;
                 auto cres = i->findRoute(res->restString, params);
                 if (!cres->isEmpty() && cres->restString.length() == 0) {
                     return cres;
                 }
             }
         } else {
-            // cout << " RouterNode::findRoute Result NOT found and NODE does not have children" <<  endl;
+            cout << " RouterNode::findRoute Result NOT found and NODE does not have children" <<  endl;
         }
 
 
         return new EmptyResult<T>();
     }
 
-    template<class T>
+    /*template<class T>
     NODE_TYPE RouterNode<T>::kind() {
         return TYPE;
-    }
+    }*/
 
 
     template<class T>
-    RouterNode<T> *RouterNode<T>::createRouterNode(string nodeUri, T id, string name) {
-        // cout << " ENTERED RouterNode::createRouterNode()" << endl;
+    RouterNode<T> *RouterNode<T>::createRouterNode(string nodeUri, T &id, string name) {
+        cout << " ENTERED RouterNode::createRouterNode()" << endl;
         size_t psOpen = nodeUri.find(PLACEHOLDER_START);
         if (psOpen == 0 && psOpen < nodeUri.find(PLACEHOLDER_END)) {
-            // cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] with id: " << id << endl;
+            cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] with id: " << id << endl;
             RouterNode<T>* ret = new PathParamNode<T>(nodeUri, id, name);
-            // cout << "CREATED PathParamNode paramName=" << ret->getParamName() << " TYPE=" << ret->kind() << endl;
+            cout << "CREATED PathParamNode paramName=" << ret->getParamName() << " EMPTY=" << ret->empty() << endl;
             return ret;
         }
-        return new RouterNode<T>(nodeUri, id, name);
+
+        return new RouterNode<T>(nodeUri, &id, name);
     }
 
 
     template<class T>
     RouterNode<T> *RouterNode<T>::createRouterNode(string nodeUri) {
-        // cout << " ENTERED RouterNode::createRouterNode()" << endl;
+        cout << " ENTERED RouterNode::createRouterNode()" << endl;
         size_t psOpen = nodeUri.find(PLACEHOLDER_START);
         if (psOpen == 0 && psOpen < nodeUri.find(PLACEHOLDER_END)) {
-            // cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] NO ID " << endl;
+            cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] NO ID " << endl;
             return new PathParamNode<T>(nodeUri);
         }
+
         return new RouterNode<T>(nodeUri);
     }
 
     template<class T>
-    RouterNode<T> *RouterNode<T>::addRoute(string uri, T id, string name) {
+    RouterNode<T> *RouterNode<T>::addRoute(string uri, T &id, string name) {
 
 
         // First strip leading slash from uri because we always start with root node
@@ -170,31 +172,32 @@ namespace router_lib {
 
         // Adding new node Always works on children because we always start with root node
         for (auto &&i : children) {
-            // cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " TYPE: " << i->kind() << " CTRL-ID=" << getController() << endl;
+            cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " EMPTY=" << i->empty() << " CTRL-ID=" << i->controller_name << endl;
             if (i->origUriPattern == nodeUri) {
 
-                // cout << "addRoute-CP1" << endl;
+                cout << "addRoute-CP1" << endl;
                 // restUri is empty means we are adding a controller
                 // to existing node that did not have controller before
                 if (restUri.empty()) {
-                    // cout << "addRoute-CP2" << endl;
-                    if (i->kind() != NODE_NC) {
-                        // cout << "addRoute-CP3 TYPE=" << i->kind() << endl;
+                    cout << "addRoute-CP2" << endl;
+                    //if (i->kind() != NODE_NC) {
+                    if(!i->empty()){
+                        cout << "addRoute-CP3 empty=" << i->empty() << endl;
 
                         // An existing Node can be a controller node
                         // but we now adding another node to it
 
                         throw "Route already added for same uri: " + uri;
                     } else {
-                        // cout << "addRoute-CP4" << endl;
-                        i->TYPE = NODE_CTRL;
+                        cout << "addRoute-CP4" << endl;
+                        //i->TYPE = NODE_CTRL;
                         i->controller_name = name;
-                        i->controller = id;
-                        // cout << "addRoute-CP5" << endl;
+                        i->controller = &id;
+                        cout << "addRoute-CP5" << endl;
                         return i;
                     }
                 } else {
-                    // cout << "addRoute-CP6" << endl;
+                    cout << "addRoute-CP6" << endl;
                     // First section of uri matched this child node
                     // but we have "restUri" of the uri
                     // in this case child node is not going to be used...
@@ -204,22 +207,22 @@ namespace router_lib {
 
         }
 
-        // cout << "addRoute-CP7" << endl;
+        cout << "addRoute-CP7" << endl;
         // newNode uri did not match any of children origUriPattern
         // in this case add new Node to childred
-        // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
+        cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
         if (restUri.empty()) {
             newNode = createRouterNode(nodeUri, id, name); //new RouterNode<T>(nodeUri, id, name);
-            // cout << "       Created new NODE with TYPE=" << newNode->TYPE << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
+            cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
         } else {
             newNode = createRouterNode(nodeUri); //new RouterNode<T>(nodeUri);
-            // cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
+            cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
             newNode->addRoute(restUri, id, name);
         }
 
 
-        // cout << "Added new child to " << origUriPattern << ":" << controller << " with uri: " << nodeUri << endl;
+        cout << "Added new child to " << origUriPattern << ":" << controller << " with uri: " << nodeUri << endl;
         children.push_back(newNode);
 
         return newNode;

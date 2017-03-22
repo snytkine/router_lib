@@ -2,6 +2,7 @@
 #include <ctime>
 #include "strlib.h"
 #include "RouterNode.h"
+#include "measure.h"
 
 
 using namespace std;
@@ -14,6 +15,9 @@ void findRoute(RouterNode<int> *rn, string uri){
 }
 
 
+RouteResult<int>* findRt(RouterNode<int> rn, string uri){
+    return rn.findRoute(uri);
+}
 
 int main() {
 
@@ -112,11 +116,11 @@ int main() {
         cout << "Controller NOT FOUND " << res->controller_id << endl;
     }*/
 
-    //int t = funcTime(findRoute, rootNode, "/OKapi/v1_0/items/77777/264/ok.get");
+    int t = funcTime(findRt, *rootNode, "/api/v1_0/items/77777/264/ok.get");
     //int t2 = funcTime(findRoute, rn, "/api/v2");
     //int t3 = funcTime(findRoute, rn, "/api/v2/users");
 
-    //std::cout<<"t1: "<< t <<"\n";
+    cout<<"t1: "<< t <<"\n";
     //std::cout<<"t2: "<< t2 <<"\n";
     //std::cout<<"t3: "<< t2 <<"\n";
     //findRoute(rn, "/api/v2/users");

@@ -34,7 +34,7 @@ namespace router_lib {
 
         void setParamName(string pn);
 
-        string getParamName();
+        string getParamName() const;
 
 
     protected:

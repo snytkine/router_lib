@@ -13,7 +13,7 @@ namespace router_lib {
     }
 
     template<class T>
-    string PathParamNode<T>::getParamName() {
+    string PathParamNode<T>::getParamName() const {
         return paramName_;
     }
 

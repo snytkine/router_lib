@@ -64,14 +64,16 @@ namespace router_lib {
         }
 
         ~RouteResult<T>() {
-            if (params != nullptr) {
-                cout << " RouteResult destructor has params " << endl;
+
+            cout << "~~~~ NodeRetult Destructor called ~~~~" << endl;
+            /*if (params != nullptr) {
+
                 params->clear();
                 params = nullptr;
-                delete controller;
+                //delete controller;
             } else {
-                //cout << " RouteResult destructor has NO params " << endl;
-            }
+
+            }*/
         };
     };
 
@@ -81,12 +83,19 @@ namespace router_lib {
         bool isEmpty() {
             return true;
         }
+
+        ~EmptyResult() {
+            cout << "EMPTY RESULT Desctuctor called" << endl;
+        }
     };
+
+
 
     template<typename T>
     bool RouteResult<T>::isEmpty() {
         return false;
     }
+
 
 }
 

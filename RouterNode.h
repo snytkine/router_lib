@@ -22,43 +22,15 @@ namespace router_lib {
     static const string PLACEHOLDER_END = "}";
 
 
-
-    template<typename TimeT = std::chrono::milliseconds>
-    struct measure {
-        template<typename F, typename ...Args>
-        static typename TimeT::rep execution(F &&func, Args &&... args) {
-            auto start = std::chrono::steady_clock::now();
-            std::forward<decltype(func)>(func)(std::forward<Args>(args)...);
-            auto duration = std::chrono::duration_cast<TimeT>
-                    (std::chrono::steady_clock::now() - start);
-            return duration.count();
-        }
-    };
-
-
-    typedef std::chrono::high_resolution_clock::time_point TimeVar;
-
-#define duration(a) std::chrono::duration_cast<std::chrono::nanoseconds>(a).count()
-#define timeNow() std::chrono::high_resolution_clock::now()
-
-    template<typename F, typename... Args>
-    double funcTime(F func, Args &&... args) {
-        TimeVar t1 = timeNow();
-        func(std::forward<Args>(args)...);
-        return duration(timeNow() - t1);
-    }
-
-
-
     template<typename T>
     class RouterNode {
 
 
     public :
 
-        RouterNode<T>(string uri, T* ctrl, string name = "") : origUriPattern(uri),
-                                                                                     controller_name(name),
-                                                                                     controller(ctrl) {
+        RouterNode<T>(string uri, T *ctrl, string name = "") : origUriPattern(uri),
+                                                               controller_name(name),
+                                                               controller(ctrl) {
             cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
         }
 
@@ -71,19 +43,17 @@ namespace router_lib {
 
         RouterNode<T> *createRouterNode(string nodeUri);
 
-        virtual T* getController(){
+        virtual T *getController() const {
             return controller;
         }
 
-        virtual string getParamName(){
-            return "";
-        }
+        virtual string getParamName() const;
 
-        void setController(T* ctrl){
+        void setController(T *ctrl) {
             controller = ctrl;
         }
 
-        bool empty(){
+        bool empty() const {
             return controller == nullptr;
         }
 
@@ -93,14 +63,15 @@ namespace router_lib {
 
         ~RouterNode() {
             if (children.size() > 0) {
-                cout << " RouterNode " << origUriPattern << " destructor called " << endl; // never called?
+                //cout << " RouterNode " << origUriPattern << " destructor called " << endl; // never called?
                 children.clear();
+                delete controller;
             }
         }
 
 
     protected:
-        T* controller = nullptr;
+        T *controller = nullptr;
 
         string controller_name;
 
@@ -118,6 +89,8 @@ namespace router_lib {
         virtual string rest(const string s);
 
     };
+
+
 
 
     //template

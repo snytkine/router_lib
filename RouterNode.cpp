@@ -10,7 +10,7 @@
 namespace router_lib {
 
     template<typename T>
-    string RouterNode<T>::rest(const string s) {
+    string RouterNode<T>::rest(const string s) const {
 
         // todo check that len of s must be > len of origUriPattern? Do we need this check?
         // is it possible to pass shorter string here?
@@ -26,7 +26,7 @@ namespace router_lib {
     }
 
     template<class T>
-    RouteResult<T> *RouterNode<T>::getNodeResult(string s, paramsList *params) {
+    RouteResult<T> *RouterNode<T>::getNodeResult(const string s, paramsList *params) const {
 
         // cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
 
@@ -54,7 +54,7 @@ namespace router_lib {
 
 
     template<class T>
-    RouteResult<T> *RouterNode<T>::findRoute(string s, paramsList *params) {
+    RouteResult<T> *RouterNode<T>::findRoute(const string s, paramsList *params) const {
 
         //std::// cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
         RouteResult<T> *res = getNodeResult(s, params);

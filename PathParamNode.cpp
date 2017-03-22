@@ -18,7 +18,7 @@ namespace router_lib {
     }
 
     template<class T>
-    string PathParamNode<T>::rest(const string s) {
+    string PathParamNode<T>::rest(const string s) const {
         // cout << "Entered PathParamNode::rest() with s=" << s << " IS_SLASH_PATH: " << END_WITH_SLASH << endl;
 
         // If this node is for NON_SLASH uri (as in /usr/{id} ) then this function will not be called because
@@ -35,7 +35,7 @@ namespace router_lib {
     }
 
     template<class T>
-    RouteResult<T> *PathParamNode<T>::getNodeResult(string uri, paramsList *params) {
+    RouteResult<T> *PathParamNode<T>::getNodeResult(const string uri, paramsList *params) const {
 
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
         // If origUriPattern ends with slash

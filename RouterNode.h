@@ -35,9 +35,9 @@ namespace router_lib {
         }
 
 
-        RouterNode<T>() : origUriPattern("/"), controller_name("ROOT") {}
+        RouterNode<T>() : origUriPattern("/"), controller_name("ROOT"), controller() {}
 
-        RouterNode<T>(std::string uri) : origUriPattern(uri) {}
+        RouterNode<T>(std::string uri) : origUriPattern(uri), controller() {}
 
         RouterNode<T> *createRouterNode(string nodeUri, T &id, string name);
 
@@ -59,7 +59,7 @@ namespace router_lib {
 
         virtual RouterNode<T> *addRoute(string uri, T &controller, string ctrl_name = "");
 
-        virtual RouteResult<T> *findRoute(string uri, paramsList *params = new paramsList());
+        virtual RouteResult<T> *findRoute(const string uri, paramsList *params = new paramsList()) const;
 
         ~RouterNode() {
             if (children.size() > 0) {
@@ -71,7 +71,7 @@ namespace router_lib {
 
 
     protected:
-        T *controller = nullptr;
+        T *controller;
 
         string controller_name;
 
@@ -84,9 +84,9 @@ namespace router_lib {
         // result may contain controller_id in which case the result is found
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
-        virtual RouteResult<T> *getNodeResult(string uri, paramsList *params = new paramsList());
+        virtual RouteResult<T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
-        virtual string rest(const string s);
+        virtual string rest(const string s) const;
 
     };
 

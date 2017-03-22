@@ -39,7 +39,7 @@ namespace router_lib {
         }
 
 
-        virtual bool isEmpty();
+        virtual bool isEmpty() const;
 
         virtual string toString() {
             string ret = "RouteResult isEmpty: ";
@@ -80,7 +80,7 @@ namespace router_lib {
 
     template<typename T>
     class EmptyResult : public RouteResult<T> {
-        bool isEmpty() {
+        bool isEmpty() const {
             return true;
         }
 
@@ -92,7 +92,7 @@ namespace router_lib {
 
 
     template<typename T>
-    bool RouteResult<T>::isEmpty() {
+    bool RouteResult<T>::isEmpty() const {
         return false;
     }
 

@@ -51,9 +51,9 @@ namespace router_lib {
         // result may contain controller_id in which case the result is found
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
-        RouteResult <T> *getNodeResult(string uri, paramsList *params = new paramsList());
+        RouteResult <T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
-        string rest(const string s);
+        string rest(const string s) const;
 
 
 

@@ -37,7 +37,7 @@ typedef std::chrono::high_resolution_clock::time_point TimeVar;
 template<typename F, typename... Args>
 double funcTime(F func, Args &&... args) {
 
-    cout << "BEFORE std::forward " << endl;
+    //cout << "BEFORE std::forward " << endl;
     TimeVar t1 = timeNow();
 
     func(std::forward<Args>(args)...);

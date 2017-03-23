@@ -8,6 +8,7 @@
 #include "RouterNode.h"
 #include "constants.h"
 
+
 namespace router_lib {
 
     template<typename T>
@@ -58,6 +59,7 @@ namespace router_lib {
     };
 
 
+    template class router_lib::FuncParamNode<int>;
 }
 
 

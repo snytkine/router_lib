@@ -26,7 +26,7 @@ namespace router_lib {
         RouterNode<T>(string uri, T *ctrl, string name = "") : origUriPattern(uri),
                                                                controller_name(name),
                                                                controller(ctrl) {
-            cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
+            //cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
         }
 
 

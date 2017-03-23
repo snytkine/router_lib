@@ -6,6 +6,7 @@
 #include "RouterNode.h"
 #include "constants.h"
 #include "FuncParamNode.h"
+#include "strlib.h"
 
 
 namespace router_lib {
@@ -54,10 +55,21 @@ namespace router_lib {
                 // uri must start with prefix
                 // extract everything from prefix to ")"
 
+                if(!::startsWith(uri, prefix)){
+                    //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
+
+                    return new EmptyResult<T>();
+                }
+
+                if(!::endsWith(uri, P_END + PATH_SEPARATOR)){
+                    //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
+
+                    return new EmptyResult<T>();
+                }
 
                 // cout << "URI HAS SLASH" << endl;
                 // extract param manually
-                RouteParam *rp = new RouteParam(paramName_, uri.substr(0, sepPos));
+                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, uri.find(P_END) - startPos));
                 // cout << "CP-1" << endl;
                 params->push_back(rp);
                 // cout << "CP-2" << endl;

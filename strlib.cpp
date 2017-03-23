@@ -179,3 +179,19 @@ std::vector<std::string> stringSplit(const std::string& str, char delimiter, int
     return stringSplit(str, delim, limit);
 }
 
+
+bool endsWith(const std::string& str, char suffix) {
+    return str.length() > 0 && str[str.length() - 1] == suffix;
+}
+
+bool endsWith(const std::string& str, const std::string& suffix) {
+    int nChars = suffix.length();
+    int start = str.length() - nChars;
+    if (start < 0) return false;
+    for (int i = 0; i < nChars; i++) {
+        if (str[start + i] != suffix[i]) return false;
+    }
+    return true;
+}
+
+

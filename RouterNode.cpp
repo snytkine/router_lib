@@ -3,10 +3,9 @@
 //
 
 #include "RouterNode.h"
-#include "strlib.h"
 #include "PathParamNode.h"
 #include "factory.h"
-#include "constants.h"
+
 
 namespace router_lib {
 
@@ -57,9 +56,9 @@ namespace router_lib {
     template<class T>
     RouteResult<T> *RouterNode<T>::findRoute(const string s, paramsList *params) const {
 
-        //std::// cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
+        // cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
         RouteResult<T> *res = getNodeResult(s, params);
-        //std::// cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
+        // cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
 
         if (res->isEmpty() == true) {
 
@@ -228,9 +227,5 @@ namespace router_lib {
         return std::string();
     }
 
-    /*template <typename T>
-    RouterNode<T>* emptyNode(){
-        RouterNode<T>* res = new RouterNode<T>("/");
-    }*/
 
 }

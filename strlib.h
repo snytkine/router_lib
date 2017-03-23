@@ -103,5 +103,16 @@ std::vector<std::string> stringSplit(const std::string& str, char delimiter, int
 std::vector<std::string> stringSplit(const std::string& str, const std::string& delimiter, int limit = -1);
 
 
+/*
+ * Function: endsWith
+ * Usage: if (endsWith(str, suffix)) ...
+ * -------------------------------------
+ * Returns <code>true</code> if the string <code>str</code> ends with
+ * the specified suffix, which may be either a string or a character.
+ */
+bool endsWith(const std::string& str, const std::string& suffix);
+bool endsWith(const std::string& str, char suffix);
+
+
 #endif //ROUTER_STRLIB_H
 

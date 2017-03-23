@@ -11,12 +11,11 @@ namespace router_lib {
 
     using namespace std;
 
-    template<typename T>
-    class PathParamNode : public RouterNode<T> {
+    class PathParamNode : public RouterNode {
 
     public:
 
-        PathParamNode(string uri, T &id, string name = "") : RouterNode<T>::RouterNode(uri, &id, name) {
+        PathParamNode(string uri, void* pVoid, string name = "") : RouterNode(uri, pVoid, name) {
 
             END_WITH_SLASH = uri.back() == '/';
             string pn = uri.substr(1, uri.length() - 3);
@@ -25,7 +24,7 @@ namespace router_lib {
             // cout << "CREATED PathParamNode paramName=" << paramName << " TYPE=" << kind() << endl;
         }
 
-        PathParamNode(string uri) : RouterNode<T>(uri) {
+        PathParamNode(string uri) : RouterNode(uri) {
             END_WITH_SLASH = uri.back() == '/';
             setParamName(uri.substr(1, uri.length() - 3));
         }
@@ -49,14 +48,14 @@ namespace router_lib {
         // result may contain controller_id in which case the result is found
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
-        RouteResult <T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
+        RouteResult *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
         //virtual string rest(const string s) const;
 
     };
 
 
-    template class router_lib::PathParamNode<int>;
+    //template class router_lib::PathParamNode<int>;
 }
 
 

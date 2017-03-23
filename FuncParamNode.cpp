@@ -13,19 +13,19 @@ namespace router_lib {
 
     using namespace std;
 
-    template<class T>
-    void FuncParamNode<T>::setParamName(string pn) {
+
+    void FuncParamNode::setParamName(string pn) {
         paramName_ = pn;
     }
 
-    template<class T>
-    string FuncParamNode<T>::getParamName() const {
+
+    string FuncParamNode::getParamName() const {
         return paramName_;
     }
 
 
-    template<class T>
-    RouteResult<T> *FuncParamNode<T>::getNodeResult(const string uri, paramsList *params) const {
+
+    RouteResult *FuncParamNode::getNodeResult(const string uri, paramsList *params) const {
 
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
         // If origUriPattern ends with slash
@@ -40,14 +40,14 @@ namespace router_lib {
         //      else
         //          -> uri IS extracted val and we have result to return!
         //
-        RouteResult<T> *res = new RouteResult<T>(params);
+        RouteResult *res = new RouteResult(params);
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
             // cout << "END_WITH_SLASH" << endl;
             if (sepPos == string::npos) {
                 // cout << "URI DOES NOT END WITH SLASH" << endl;
 
-                return new EmptyResult<T>();
+                return new EmptyResult();
             } else {
 
                 // LOGIC
@@ -58,13 +58,13 @@ namespace router_lib {
                 if(!::startsWith(uri, prefix)){
                     //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
 
-                    return new EmptyResult<T>();
+                    return new EmptyResult();
                 }
 
                 if(!::endsWith(uri, P_END + PATH_SEPARATOR)){
                     //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
 
-                    return new EmptyResult<T>();
+                    return new EmptyResult();
                 }
 
                 // cout << "URI HAS SLASH" << endl;
@@ -79,7 +79,7 @@ namespace router_lib {
                 // cout << "CP-4" << endl;
                 if (res->restString.empty()) {
                     // cout << "CP-5" << endl;
-                    res->controller = RouterNode<T>::getController();
+                    res->controller = RouterNode::getController();
                 } else {
                     // cout << "CP-6" << " rest was: " << res->restString << endl;
                 }
@@ -91,7 +91,7 @@ namespace router_lib {
             if (sepPos != string::npos) {
                 // cout << "URI HAS SLASH" << endl;
 
-                return new EmptyResult<T>();
+                return new EmptyResult();
             } else {
                 // LOGIC:
                 // uri must end with ")"

@@ -25,12 +25,12 @@ namespace router_lib {
         //return ret;
     //}
 
-    template<class T>
-    RouteResult<T> *RouterNode<T>::getNodeResult(const string s, paramsList *params) const {
+
+    RouteResult *RouterNode::getNodeResult(const string s, paramsList *params) const {
 
         // cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
 
-        RouteResult<T> *res = new RouteResult<T>(params);
+        RouteResult *res = new RouteResult(params);
 
         if (s == origUriPattern) {
             // cout << "           getNodeResult MATCH [" << origUriPattern << "] matched " << s << endl;
@@ -47,17 +47,17 @@ namespace router_lib {
 
             // cout << " RouterNode::getNodeResult returning empty result: " << endl;
 
-            return new EmptyResult<T>();
+            return new EmptyResult();
 
         }
     }
 
 
-    template<class T>
-    RouteResult<T> *RouterNode<T>::findRoute(const string s, paramsList *params) const {
+
+    RouteResult *RouterNode::findRoute(const string s, paramsList *params) const {
 
         // cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
-        RouteResult<T> *res = getNodeResult(s, params);
+        RouteResult *res = getNodeResult(s, params);
         // cout << " RouteResult controller_id " << res->controller_id << " restString: " << res->restString << endl;
 
         if (res->isEmpty() == true) {
@@ -85,39 +85,12 @@ namespace router_lib {
         // cout << "RETURNING DEFAULT EMPTY RESULT" << endl;
 
 
-        return new EmptyResult<T>();
+        return new EmptyResult();
     }
 
 
-    template<class T>
-    RouterNode<T> *RouterNode<T>::createRouterNode(string nodeUri, T &id, string name) {
-        // cout << " ENTERED RouterNode::createRouterNode()" << endl;
-        size_t psOpen = nodeUri.find(PLACEHOLDER_START);
-        if (psOpen == 0 && psOpen < nodeUri.find(PLACEHOLDER_END)) {
-            // cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] with id: " << id << endl;
-            RouterNode<T> *ret = new PathParamNode<T>(nodeUri, id, name);
-            // cout << "CREATED PathParamNode paramName=" << ret->getParamName() << " EMPTY=" << ret->empty() << endl;
-            return ret;
-        }
 
-        return new RouterNode<T>(nodeUri, &id, name);
-    }
-
-
-    template<class T>
-    RouterNode<T> *RouterNode<T>::createRouterNode(string nodeUri) {
-        // cout << " ENTERED RouterNode::createRouterNode()" << endl;
-        size_t psOpen = nodeUri.find(PLACEHOLDER_START);
-        if (psOpen == 0 && psOpen < nodeUri.find(PLACEHOLDER_END)) {
-            // cout << "TO create PathParamNode with nodeUri [" << nodeUri << "] NO ID " << endl;
-            return new PathParamNode<T>(nodeUri);
-        }
-
-        return new RouterNode<T>(nodeUri);
-    }
-
-    template<class T>
-    RouterNode<T> *RouterNode<T>::addRoute(string uri, T &id, string name) {
+    RouterNode *RouterNode::addRoute(string uri, void* pVoid, string name) {
 
 
         // First strip leading slash from uri because we always start with root node
@@ -132,7 +105,7 @@ namespace router_lib {
 
 
 
-        RouterNode<T> *newNode;
+        RouterNode *newNode;
         // Rest of the uri string after the first uri path section was stripped off
         string restUri;
 
@@ -184,7 +157,7 @@ namespace router_lib {
                     } else {
                         // cout << "addRoute-CP4" << endl;
                         i->controller_name = name;
-                        i->setController(&id);
+                        i->setController(pVoid);
                         //i->controller = &id;
                         // cout << "addRoute-CP5" << endl;
                         return i;
@@ -194,7 +167,7 @@ namespace router_lib {
                     // First section of uri matched this child node
                     // but we have "restUri" of the uri
                     // in this case child node is not going to be used...
-                    return i->addRoute(restUri, id, name);
+                    return i->addRoute(restUri, pVoid, name);
                 }
             }
 
@@ -206,12 +179,12 @@ namespace router_lib {
         // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
         if (restUri.empty()) {
-            newNode = router_lib::createRouterNode<T>(nodeUri, id, name); //new RouterNode<T>(nodeUri, id, name);
+            newNode = router_lib::createRouterNode(nodeUri, pVoid, name); //new RouterNode<T>(nodeUri, id, name);
             // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
         } else {
-            newNode = router_lib::createRouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
+            newNode = router_lib::createRouterNode(nodeUri); //new RouterNode<T>(nodeUri);
             // cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
-            newNode->addRoute(restUri, id, name);
+            newNode->addRoute(restUri, pVoid, name);
         }
 
 
@@ -222,8 +195,8 @@ namespace router_lib {
 
     }
 
-    template<typename T>
-    string RouterNode<T>::getParamName() const {
+
+    string RouterNode::getParamName() const {
         return std::string();
     }
 

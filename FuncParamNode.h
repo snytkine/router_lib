@@ -11,16 +11,16 @@
 
 namespace router_lib {
 
-    template<typename T>
-    class FuncParamNode : public RouterNode<T> {
+
+    class FuncParamNode : public RouterNode {
 
     public:
 
-        FuncParamNode(string uri, T &id, string name = "") : RouterNode<T>::RouterNode(uri, &id, name) {
+        FuncParamNode(string uri, void* pVoid, string name = "") : RouterNode(uri, pVoid, name) {
             init(uri);
         }
 
-        FuncParamNode(string uri) : RouterNode<T>(uri) {
+        FuncParamNode(string uri) : RouterNode(uri) {
             init(uri);
         }
 
@@ -54,12 +54,12 @@ namespace router_lib {
         // result may contain controller_id in which case the result is found
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
-        RouteResult<T> *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
+        RouteResult *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
 
     };
 
 
-    template class router_lib::FuncParamNode<int>;
+    //template class router_lib::FuncParamNode<int>;
 }
 
 

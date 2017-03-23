@@ -87,7 +87,7 @@ int main() {
         //RouteResult<int> *res4 = rootNode->findRoute("/api/v1_0/users/");
         //RouteResult<int> *res5 = rootNode->findRoute("/api/v1_0/items/544/");
         //RouteResult<int> *res6 = rootNode->findRoute("/api/v1_0/items/563/ok.get");
-        RouteResult *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.gets");
+        RouteResult *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
         RouteResult *res8 = rootNode->findRoute("/api/v1_0/user('mywidgets')/");
 
 
@@ -107,7 +107,7 @@ int main() {
         //cout << "RES-5 route /api/v1_0/items/55/: " << res5->controller_id << endl;
         //cout << "RES-6 route /api/v1_0/items/563/ok.get: " << res6->toString() << endl;
         cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << " ctrl7: " << *ctrl7 << endl;
-        //cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
+        cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
 
     } catch (...) {
         cout << "SOME EXCEPTION" << endl;

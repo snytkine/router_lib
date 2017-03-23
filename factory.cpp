@@ -10,7 +10,7 @@
 namespace router_lib {
 
 
-    RouterNode *createRouterNode(const string nodeUri, void* pVoid, const string name) {
+    RouterNode *createRouterNode(const std::string nodeUri, void* pVoid, const std::string name) {
         //cout << " ENTERED router_lib::createRouterNode() with nodeUri=[" << nodeUri << "]" << endl;
         size_t psOpen = nodeUri.find(PLACEHOLDER_START);
         size_t psClose = nodeUri.find(PLACEHOLDER_END);
@@ -35,7 +35,7 @@ namespace router_lib {
     }
 
 
-    RouterNode *createRouterNode(string nodeUri) {
+    RouterNode *createRouterNode(const std::string nodeUri) {
         // cout << " ENTERED RouterNode::createRouterNode()" << endl;
         size_t psOpen = nodeUri.find(PLACEHOLDER_START);
         size_t psClose = nodeUri.find(PLACEHOLDER_END);

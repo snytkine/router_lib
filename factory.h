@@ -11,11 +11,9 @@
 
 namespace router_lib {
 
+    RouterNode *createRouterNode(const std::string nodeUri, void* pVoid, const std::string name);
 
-    RouterNode *createRouterNode(const string nodeUri, void* pVoid, const string name);
-
-
-    RouterNode *createRouterNode(string nodeUri);
+    RouterNode *createRouterNode(const std::string nodeUri);
 }
 
 #endif //ROUTER_NODE_RESULT_H

@@ -9,34 +9,17 @@
 namespace router_lib {
 
 
-    void PathParamNode::setParamName(string pn) {
+    void PathParamNode::setParamName(std::string pn) {
         paramName_ = pn;
     }
 
 
-    string PathParamNode::getParamName() const {
+    std::string PathParamNode::getParamName() const {
         return paramName_;
     }
 
-    //template<class T>
-    //string PathParamNode<T>::rest(const string s) const {
-        // cout << "Entered PathParamNode::rest() with s=" << s << " IS_SLASH_PATH: " << END_WITH_SLASH << endl;
 
-        // If this node is for NON_SLASH uri (as in /usr/{id} ) then this function will not be called because
-        // the logic will return NULL
-        // If this NODE is SLASH path but looking for non-slash url this function will also NOT be called
-        // this is a case when this node is for {id}/ but looking for something like /usr/55
-        // This means that this function will be called ONLY if this node END_WITH_SLASH and s has slash
-        // need to get everything after the slash!
-        //
-        //string ret= s.substr(s.find(PATH_SEPARATOR) + 1, string::npos );
-        // cout << "PathParamNode::rest ret[" << ret << "] result for [" << s << "]" << endl;
-
-        //return ret;
-    //}
-
-
-    RouteResult *PathParamNode::getNodeResult(const string uri, paramsList *params) const {
+    RouteResult *PathParamNode::getNodeResult(const std::string uri, paramsList *params) const {
 
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
         // If origUriPattern ends with slash
@@ -55,12 +38,12 @@ namespace router_lib {
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
             // cout << "END_WITH_SLASH" << endl;
-            if (sepPos == string::npos) {
+            if (sepPos == std::string::npos) {
                 // cout << "URI DOES NOT END WITH SLASH" << endl;
 
                 return new EmptyResult();
             } else {
-                // cout << "URI HAS SLASH" << endl;
+                std::cout << "URI HAS SLASH " << uri << std::endl;
                 // extract param manually
                 RouteParam *rp = new RouteParam(paramName_, uri.substr(0, sepPos));
                 // cout << "CP-1" << endl;
@@ -71,8 +54,8 @@ namespace router_lib {
                 res->restString = tail_(uri);
                 // cout << "CP-4" << endl;
                 if (res->restString.empty()) {
-                    // cout << "CP-5" << endl;
-                    res->controller = RouterNode::getController();
+                    std::cout << "CP-5" << std::endl;
+                    res->controller = getController();
                 } else {
                     // cout << "CP-6" << " rest was: " << res->restString << endl;
                 }
@@ -81,7 +64,7 @@ namespace router_lib {
             }
         } else {
             // cout << "NOT END_WITH_SLASH" << endl;
-            if (sepPos != string::npos) {
+            if (sepPos != std::string::npos) {
                 // cout << "URI HAS SLASH" << endl;
 
                 return new EmptyResult();
@@ -96,7 +79,6 @@ namespace router_lib {
                 return res;
             }
         }
-
 
     }
 

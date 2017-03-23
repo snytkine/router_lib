@@ -9,24 +9,19 @@
 
 namespace router_lib {
 
-    //template<typename T>
-    //string RouterNode<T>::rest(const string s) const {
+    bool RouterNode::empty() const {
+        return controller == nullptr;
+    }
 
-        // todo check that len of s must be > len of origUriPattern? Do we need this check?
-        // is it possible to pass shorter string here?
+    void RouterNode::setController(void *ctrl) {
+        controller = ctrl;
+    }
 
-        // cout << "ENTERED RouterNode::rest with s=[" << s << "] origUriPattern=" << origUriPattern << endl;
+    void* RouterNode::getController() const {
+        return controller;
+    }
 
-
-        //string ret = s.substr(s.find(PATH_SEPARATOR) + 1, string::npos);
-
-        // cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] in NODE  " << controller_name << endl;
-
-        //return ret;
-    //}
-
-
-    RouteResult *RouterNode::getNodeResult(const string s, paramsList *params) const {
+    RouteResult *RouterNode::getNodeResult(const std::string s, paramsList *params) const {
 
         // cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
 
@@ -54,7 +49,7 @@ namespace router_lib {
 
 
 
-    RouteResult *RouterNode::findRoute(const string s, paramsList *params) const {
+    RouteResult *RouterNode::findRoute(const std::string s, paramsList *params) const {
 
         // cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
         RouteResult *res = getNodeResult(s, params);
@@ -90,13 +85,13 @@ namespace router_lib {
 
 
 
-    RouterNode *RouterNode::addRoute(string uri, void* pVoid, string name) {
+    RouterNode *RouterNode::addRoute(std::string uri, void* pVoid, const std::string name) {
 
 
         // First strip leading slash from uri because we always start with root node
         // which is a node for a slash uri
         if (uri != "/" && uri[0] == '/') {
-            uri = uri.substr(1, string::npos);
+            uri = uri.substr(1, std::string::npos);
         }
 
         // todo check if origUri == uri and id is NOT empty
@@ -107,15 +102,15 @@ namespace router_lib {
 
         RouterNode *newNode;
         // Rest of the uri string after the first uri path section was stripped off
-        string restUri;
+        std::string restUri;
 
         // uri of the new node that we going to add
-        string nodeUri;
+        std::string nodeUri;
 
         // position of path separator in the uri
         size_t sepPos = uri.find(PATH_SEPARATOR);
 
-        if (sepPos != string::npos) {
+        if (sepPos != std::string::npos) {
             nodeUri = uri.substr(0, sepPos + 1);
             restUri = tail_(uri);//uri.substr(sepPos + 1, string::npos);
         } else {
@@ -194,11 +189,5 @@ namespace router_lib {
         return newNode;
 
     }
-
-
-    string RouterNode::getParamName() const {
-        return std::string();
-    }
-
 
 }

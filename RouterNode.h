@@ -15,15 +15,13 @@
 
 
 namespace router_lib {
-    using namespace std;
-
 
     class RouterNode {
 
 
     public :
 
-        RouterNode(string uri, void *ctrl, string name = "") : origUriPattern(uri),
+        RouterNode(std::string uri, void *ctrl, std::string name = "") : origUriPattern(uri),
                                                                controller_name(name),
                                                                controller(ctrl) {
             //cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
@@ -34,73 +32,40 @@ namespace router_lib {
 
         RouterNode(std::string uri) : origUriPattern(uri), controller() {}
 
-        //RouterNode *createRouterNode(string nodeUri, void* id, string name);
+        virtual void *getController() const;
 
-        //RouterNode *createRouterNode(string nodeUri);
+        void setController(void *ctrl);
 
-        virtual void *getController() const {
-            return controller;
-        }
+        bool empty() const;
 
-        virtual string getParamName() const;
+        virtual RouterNode *addRoute(std::string uri, void *controller, const std::string ctrl_name = "");
 
-        void setController(void *ctrl) {
-            controller = ctrl;
-        }
-
-        bool empty() const {
-            return controller == nullptr;
-        }
-
-        virtual RouterNode *addRoute(string uri, void* controller, string ctrl_name = "");
-
-        virtual RouteResult *findRoute(const string uri, paramsList *params = new paramsList()) const;
+        virtual RouteResult *findRoute(const std::string uri, paramsList *params = new paramsList()) const;
 
         ~RouterNode() {
             if (children.size() > 0) {
                 //cout << " RouterNode " << origUriPattern << " destructor called " << endl; // never called?
                 children.clear();
-                //delete controller;
             }
         }
 
-        //virtual string rest(const string s) const;
-
     protected:
-        void* controller;
+        void *controller;
 
-        string controller_name;
+        std::string controller_name;
 
-        string origUriPattern;
+        std::string origUriPattern;
 
-        vector<RouterNode *> children;
+        std::vector<RouterNode *> children;
 
         // This is where the work is done to match uri for this node, possibly extract router params and
         // return a result.
         // result may contain controller_id in which case the result is found
         // or it may append extracted route params to params, generate the "restString" and return
         // result with params and restString, in which case children will be searched for a match for the restString
-        virtual RouteResult *getNodeResult(const string uri, paramsList *params = new paramsList()) const;
-
-
+        virtual RouteResult *getNodeResult(const std::string uri, paramsList *params = new paramsList()) const;
 
     };
-
-
-
-
-    //template
-    //class RouterNode<int>;
-
-
-    //template<typename T>
-    //RouterNode<T>* createRouterNode(string nodeUri, T id, string name);
-
-    //template
-    //RouterNode<int>* createRouterNode(string nodeUri, int id, string name);
-
-    //template <typename T>
-    //RouterNode<T>* emptyNode();
 
 }
 #endif //ROUTER_ROUTER_NODE_H

@@ -10,18 +10,16 @@
 
 namespace router_lib {
 
-    using namespace std;
-
     class RouteParam {
 
     public:
-        const string name;
-        const string val;
+        const std::string name;
+        const std::string val;
 
-        RouteParam(const string nn, const string vv) : name(nn), val(vv) {}
+        RouteParam(const std::string nn, const std::string vv) : name(nn), val(vv) {}
     };
 
-    typedef vector<RouteParam *> paramsList;
+    typedef std::vector<RouteParam *> paramsList;
 
 
     class RouteResult {
@@ -29,20 +27,20 @@ namespace router_lib {
     public:
 
         paramsList *params;
-        void* controller;
-        string restString = "";
+        void *controller;
+        std::string restString;
 
         RouteResult() {}
 
-        RouteResult(paramsList *p, void* cid = nullptr, string rest = "") : restString(rest), controller(cid) {
+        RouteResult(paramsList *p, void *cid = nullptr, std::string rest = "") : restString(rest), controller(cid) {
             params = p;
         }
 
 
         virtual bool isEmpty() const;
 
-        virtual string toString() {
-            string ret = "RouteResult isEmpty: ";
+        virtual std::string toString() {
+            std::string ret = "RouteResult isEmpty: ";
             ret = ret + ((isEmpty()) ? "TRUE" : "FALSE");
             ret = ret + " CID=";
             if (controller != nullptr) {
@@ -66,25 +64,19 @@ namespace router_lib {
 
         ~RouteResult() {
 
-            cout << "~~~~ NodeRetult Destructor called ~~~~" << endl;
-            /*if (params != nullptr) {
-
+            //cout << "~~~~ NodeRetult Destructor called ~~~~" << endl;
+            if (params != nullptr && params->size() > 0) {
                 params->clear();
-                params = nullptr;
-                //delete controller;
-            } else {
+                delete params;
+            }
 
-            }*/
         };
     };
 
 
-
     class EmptyResult : public RouteResult {
-
         bool isEmpty() const;
     };
-
 
 
 }

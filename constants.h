@@ -7,13 +7,13 @@
 #include <iostream>
 
 namespace router_lib {
-    using namespace std;
-    static const string PATH_SEPARATOR = "/";
-    static const string PLACEHOLDER_START = "{";
-    static const string PLACEHOLDER_END = "}";
-    static const string P_START = "(";
-    static const string P_END = ")";
 
-    string tail_(const string s);
+    static const std::string PATH_SEPARATOR = "/";
+    static const std::string PLACEHOLDER_START = "{";
+    static const std::string PLACEHOLDER_END = "}";
+    static const std::string P_START = "(";
+    static const std::string P_END = ")";
+
+    std::string tail_(const std::string s);
 }
 #endif //ROUTER_CONSTANTS_H

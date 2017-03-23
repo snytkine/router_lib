@@ -11,21 +11,17 @@
 
 namespace router_lib {
 
-    using namespace std;
+    void FuncParamNode::init(std::string uri) {
+        END_WITH_SLASH = uri.back() == '/';
+        startPos = uri.find(P_START) + 1;
+        prefix = uri.substr(0, startPos);
 
-
-    void FuncParamNode::setParamName(string pn) {
-        paramName_ = pn;
+        std::string pn = uri.substr(uri.find(PLACEHOLDER_START) + 1,
+                               uri.find(PLACEHOLDER_END) - uri.find(PLACEHOLDER_START) - 1);
+        setParamName(pn);
     }
 
-
-    string FuncParamNode::getParamName() const {
-        return paramName_;
-    }
-
-
-
-    RouteResult *FuncParamNode::getNodeResult(const string uri, paramsList *params) const {
+    RouteResult *FuncParamNode::getNodeResult(const std::string uri, paramsList *params) const {
 
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
         // If origUriPattern ends with slash
@@ -44,7 +40,7 @@ namespace router_lib {
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
             // cout << "END_WITH_SLASH" << endl;
-            if (sepPos == string::npos) {
+            if (sepPos == std::string::npos) {
                 // cout << "URI DOES NOT END WITH SLASH" << endl;
 
                 return new EmptyResult();
@@ -55,13 +51,13 @@ namespace router_lib {
                 // uri must start with prefix
                 // extract everything from prefix to ")"
 
-                if(!::startsWith(uri, prefix)){
+                if (!::startsWith(uri, prefix)) {
                     //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
 
                     return new EmptyResult();
                 }
 
-                if(!::endsWith(uri, P_END + PATH_SEPARATOR)){
+                if (!::endsWith(uri, P_END + PATH_SEPARATOR)) {
                     //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
 
                     return new EmptyResult();
@@ -79,7 +75,7 @@ namespace router_lib {
                 // cout << "CP-4" << endl;
                 if (res->restString.empty()) {
                     // cout << "CP-5" << endl;
-                    res->controller = RouterNode::getController();
+                    res->controller = getController();
                 } else {
                     // cout << "CP-6" << " rest was: " << res->restString << endl;
                 }
@@ -88,7 +84,7 @@ namespace router_lib {
             }
         } else {
             // cout << "NOT END_WITH_SLASH" << endl;
-            if (sepPos != string::npos) {
+            if (sepPos != std::string::npos) {
                 // cout << "URI HAS SLASH" << endl;
 
                 return new EmptyResult();
@@ -108,7 +104,6 @@ namespace router_lib {
                 return res;
             }
         }
-
 
     }
 }

@@ -301,7 +301,7 @@ template <class T>
         }
     }
 
-
+/*
     template <class T>
     RouteResult<T> *RouterNode<T>::findRoute(const std::string s, paramsList *params) {
 
@@ -353,9 +353,9 @@ template <class T>
 
 
         return new EmptyResult<T>();
-    }
+    }*/
 
-
+/*
     template <class T>
     void *RouterNode<T>::addRoute(std::string uri, T &controller, const std::string name) {
 
@@ -460,6 +460,6 @@ template <class T>
 
         //return newNode;
 
-    }
+    }*/
 
 }

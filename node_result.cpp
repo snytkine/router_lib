@@ -6,11 +6,13 @@
 
 namespace router_lib {
 
-    bool RouteResult::isEmpty() const {
+    template <class T>
+    bool RouteResult<T>::isEmpty() {
         return false;
     }
 
-    bool EmptyResult::isEmpty() const {
+    template <class T>
+    bool EmptyResult<T>::isEmpty() {
         return true;
     }
 }

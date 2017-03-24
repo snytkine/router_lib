@@ -8,8 +8,8 @@
 
 namespace router_lib {
 
-
-    void RouterNode::init(std::string uri) {
+    template <class T>
+    void RouterNode<T>::init(std::string uri) {
 
         END_WITH_SLASH = uri.back() == '/';
 
@@ -106,21 +106,23 @@ namespace router_lib {
 
     }
 
-
-    bool RouterNode::empty() const {
+template <class T>
+    bool RouterNode<T>::empty() const {
         return controller == nullptr;
     }
 
-    void RouterNode::setController(void *ctrl) {
+    /*template<class T>
+    void RouterNode<T>::setController(T *ctrl) {
         controller = ctrl;
-    }
+    }*/
 
-    void *RouterNode::getController() const {
+    template <class T>
+    T *RouterNode<T>::getController() const {
         return controller;
     }
 
-
-    RouteResult *RouterNode::getFuncNodeResult(const std::string uri, paramsList *params) const {
+    template <class T>
+    RouteResult<T> *RouterNode<T>::getFuncNodeResult(const std::string uri, paramsList *params) {
 
         // std::cout << "Entered getFuncNodeResult NodeType=[" << (int) nodeType_ << "] looking for " << uri << std::endl;
         // If origUriPattern ends with slash
@@ -135,14 +137,14 @@ namespace router_lib {
         //      else
         //          -> uri IS extracted val and we have result to return!
         //
-        RouteResult *res = new RouteResult(params);
+        RouteResult<T> *res = new RouteResult<T>(params);
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
             // cout << "END_WITH_SLASH" << endl;
             if (sepPos == std::string::npos) {
                 // cout << "URI DOES NOT END WITH SLASH" << endl;
 
-                return new EmptyResult();
+                return new EmptyResult<T>();
             } else {
 
                 // LOGIC
@@ -153,13 +155,13 @@ namespace router_lib {
                 if (!::startsWith(uri, prefix)) {
                     //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
 
-                    return new EmptyResult();
+                    return new EmptyResult<T>();
                 }
 
                 if (!::endsWith(uri, P_END + PATH_SEPARATOR)) {
                     //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
 
-                    return new EmptyResult();
+                    return new EmptyResult<T>();
                 }
 
                 // cout << "URI HAS SLASH" << endl;
@@ -186,7 +188,7 @@ namespace router_lib {
             if (sepPos != std::string::npos) {
                 // cout << "URI HAS SLASH" << endl;
 
-                return new EmptyResult();
+                return new EmptyResult<T>();
             } else {
                 // LOGIC:
                 // uri must end with ")"
@@ -206,8 +208,8 @@ namespace router_lib {
 
     }
 
-
-    RouteResult *RouterNode::getParamNodeResult(const std::string uri, paramsList *params) const {
+    template <class T>
+    RouteResult<T> *RouterNode<T>::getParamNodeResult(const std::string uri, paramsList *params) {
 
         // std::cout << "Entered getParamNodeResult NodeType=[" << (int) nodeType_ << "] looking for " << uri << std::endl;
         // cout << "Entered PathParamNode::getNodeResult looking for " << uri << endl;
@@ -223,14 +225,14 @@ namespace router_lib {
         //      else
         //          -> uri IS extracted val and we have result to return!
         //
-        RouteResult *res = new RouteResult(params);
+        RouteResult<T> *res = new RouteResult<T>(params);
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
             // cout << "END_WITH_SLASH" << endl;
             if (sepPos == std::string::npos) {
                 // cout << "URI DOES NOT END WITH SLASH" << endl;
 
-                return new EmptyResult();
+                return new EmptyResult<T>();
             } else {
                 // std::cout << "URI HAS SLASH " << uri << std::endl;
                 // extract param manually
@@ -256,7 +258,7 @@ namespace router_lib {
             if (sepPos != std::string::npos) {
                 // cout << "URI HAS SLASH" << endl;
 
-                return new EmptyResult();
+                return new EmptyResult<T>();
             } else {
                 // cout << "URI ALSO DOES NOT HAVE SLASH" << endl;
                 RouteParam *rp = new RouteParam(paramName_, uri);
@@ -271,12 +273,13 @@ namespace router_lib {
 
     }
 
-    RouteResult *RouterNode::getNodeResult(const std::string s, paramsList *params) const {
+    template <class T>
+    RouteResult<T> *RouterNode<T>::getNodeResult(const std::string s, paramsList *params) {
 
         // std::cout << "Entered getNodeResult NodeType=[" << (int) nodeType_ << "] looking for " << s << std::endl;
         // cout << "Entered getNodeResult in node [" << origUriPattern << "] looking for " << s << endl;
 
-        RouteResult *res = new RouteResult(params);
+        RouteResult<T> *res = new RouteResult<T>(params);
 
         if (s == origUriPattern) {
             // cout << "           getNodeResult MATCH [" << origUriPattern << "] matched " << s << endl;
@@ -293,16 +296,17 @@ namespace router_lib {
 
             // cout << " RouterNode::getNodeResult returning empty result: " << endl;
 
-            return new EmptyResult();
+            return new EmptyResult<T>();
 
         }
     }
 
 
-    RouteResult *RouterNode::findRoute(const std::string s, paramsList *params) const {
+    template <class T>
+    RouteResult<T> *RouterNode<T>::findRoute(const std::string s, paramsList *params) {
 
         // cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
-        RouteResult *res;
+        RouteResult<T> *res;
 
         switch (nodeType_) {
 
@@ -348,11 +352,12 @@ namespace router_lib {
         // cout << "RETURNING DEFAULT EMPTY RESULT" << endl;
 
 
-        return new EmptyResult();
+        return new EmptyResult<T>();
     }
 
 
-    RouterNode *RouterNode::addRoute(std::string uri, void *pVoid, const std::string name) {
+    template <class T>
+    void *RouterNode<T>::addRoute(std::string uri, T &controller, const std::string name) {
 
 
         // First strip leading slash from uri because we always start with root node
@@ -367,7 +372,7 @@ namespace router_lib {
 
 
 
-        RouterNode *newNode;
+        RouterNode<T> *newNode;
         // Rest of the uri string after the first uri path section was stripped off
         std::string restUri;
 
@@ -415,11 +420,11 @@ namespace router_lib {
                         // An existing Node can be a controller node
                         // but we now adding another node to it
 
-                        throw "Route already added for same uri: " + uri;
+                        throw std::invalid_argument("Route already added for same uri: " + uri);
                     } else {
                         // cout << "addRoute-CP4" << endl;
                         i->controller_name = name;
-                        i->setController(pVoid);
+                        i->controller = &controller;
                         //i->controller = &id;
                         // cout << "addRoute-CP5" << endl;
                         return i;
@@ -429,7 +434,7 @@ namespace router_lib {
                     // First section of uri matched this child node
                     // but we have "restUri" of the uri
                     // in this case child node is not going to be used...
-                    return i->addRoute(restUri, pVoid, name);
+                    return i->addRoute(restUri, controller, name);
                 }
             }
 
@@ -441,19 +446,19 @@ namespace router_lib {
         // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
         if (restUri.empty()) {
-            newNode = new RouterNode(nodeUri, pVoid, name); //new RouterNode<T>(nodeUri, id, name);
+            newNode = new RouterNode<T>(nodeUri, &controller, name); //new RouterNode<T>(nodeUri, id, name);
             // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
         } else {
-            newNode = new RouterNode(nodeUri); //new RouterNode<T>(nodeUri);
+            newNode = new RouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
             // cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
-            newNode->addRoute(restUri, pVoid, name);
+            newNode->addRoute(restUri, controller, name);
         }
 
 
         // cout << "Added new child to " << origUriPattern << ":" << controller << " with uri: " << nodeUri << endl;
         children.push_back(newNode);
 
-        return newNode;
+        //return newNode;
 
     }
 

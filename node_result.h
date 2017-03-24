@@ -22,24 +22,25 @@ namespace router_lib {
     typedef std::vector<RouteParam *> paramsList;
 
 
+    template<class T>
     class RouteResult {
 
     public:
 
         paramsList *params;
-        void *controller;
+        T *controller;
         std::string restString;
 
-        RouteResult() {}
+        RouteResult<T>() {}
 
-        RouteResult(paramsList *p, void *cid = nullptr, std::string rest = "") : restString(rest), controller(cid) {
+        RouteResult<T>(paramsList *p, T *cid = nullptr, std::string rest = "") : restString(rest), controller(cid) {
             params = p;
         }
 
 
-        virtual bool isEmpty() const;
+        virtual bool isEmpty();
 
-        virtual std::string toString() {
+        std::string toString() {
             std::string ret = "RouteResult isEmpty: ";
             ret = ret + ((isEmpty()) ? "TRUE" : "FALSE");
             ret = ret + " CID=";
@@ -62,7 +63,7 @@ namespace router_lib {
             return ret;
         }
 
-        ~RouteResult() {
+        ~RouteResult<T>() {
 
             //cout << "~~~~ NodeRetult Destructor called ~~~~" << endl;
             if (params != nullptr && params->size() > 0) {
@@ -73,12 +74,14 @@ namespace router_lib {
         };
     };
 
-
-    class EmptyResult : public RouteResult {
-        bool isEmpty() const;
+    template<class T>
+    class EmptyResult : public RouteResult<T> {
+        bool isEmpty();
     };
 
 
+    template class RouteResult<int>;
+    template class EmptyResult<int>;
 }
 
 #endif //ROUTER_NODE_RESULT_H

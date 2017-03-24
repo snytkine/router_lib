@@ -1,19 +1,26 @@
 #include <iostream>
 #include <ctime>
 #include "strlib.h"
+#include "node_result.h"
+#include "strlib.h"
+//#include "RouterNodeInt.h"
 #include "RouterNode.h"
 #include "measure.h"
+
 
 
 using namespace std;
 using namespace router_lib;
 
+typedef RouterNode<int> MyRouter;
 
-RouteResult *findRt(RouterNode rn, string uri) {
+RouteResult<int> *findRt(RouterNode<int> rn, string uri) {
     return rn.findRoute(uri);
 }
 
 int main() {
+
+    //auto g = template class router_lib::RouterNode<int>;
 
     string mstr = "category({widgets})/";
 
@@ -44,7 +51,7 @@ int main() {
     //double diff;
     //start = clock();
 
-    RouterNode *rootNode = new RouterNode();
+    MyRouter *rootNode = new MyRouter();
     //rootNode->addRoute("api/v1_0/users", 1, "users");
     int route0 = 0;
     int route2 = 2;
@@ -61,34 +68,36 @@ int main() {
     int route12 = 12;
 
     try {
-        rootNode->addRoute("api/v2_0/users/user/", &route5, "user");
-        rootNode->addRoute("myapi/v1_0/users/user/", &route6, "userX");
-
-        rootNode->addRoute("api/v1_0/users/user", &route4, "userY");
+        rootNode->addRoute("api/v2_0/users/user/", route5, "user");
 
 
-        rootNode->addRoute("api/v1_0/users/user/123", &route3, "user123");
-        rootNode->addRoute("api/v1_0/users/user/", &route5, "user");
+        rootNode->addRoute("myapi/v1_0/users/user/", route6, "userX");
 
-        rootNode->addRoute("api/v1_0/user({id})/", &route8, "users/()");
+        rootNode->addRoute("api/v1_0/users/user", route4, "userY");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", &route11, "api/v1_0/items/{item_id}/ok.get");
-        rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", &route12,
+
+        rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
+        rootNode->addRoute("api/v1_0/users/user/", route5, "user");
+
+        rootNode->addRoute("api/v1_0/user({id})/", route8, "users/()");
+
+        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "api/v1_0/items/{item_id}/ok.get");
+        rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12,
                            "api/v1_0/items/{item_id}/{user_id}/ok.get");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/", &route9, "api/v1_0/items/{item_id}/");
+        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "api/v1_0/items/{item_id}/");
 
 
 
         //cout << '\n' << '\n' << "=================" << '\n' << '\n' << endl;
         //RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
-        RouteResult *res2 = rootNode->findRoute("/api/v1_0/users/user");
-        RouteResult *res3 = rootNode->findRoute("/api/v1_0/users");
+        RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
+        RouteResult<int> *res3 = rootNode->findRoute("/api/v1_0/users");
         //RouteResult<int> *res4 = rootNode->findRoute("/api/v1_0/users/");
         //RouteResult<int> *res5 = rootNode->findRoute("/api/v1_0/items/544/");
         //RouteResult<int> *res6 = rootNode->findRoute("/api/v1_0/items/563/ok.get");
-        RouteResult *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
-        RouteResult *res8 = rootNode->findRoute("/api/v1_0/user('mywidgets')/");
+        RouteResult<int> *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
+        RouteResult<int> *res8 = rootNode->findRoute("/api/v1_0/user('mywidgets')/");
 
 
         int *ctrl7;

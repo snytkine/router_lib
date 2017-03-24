@@ -42,7 +42,7 @@ namespace router_lib {
 
         virtual RouteResult *findRoute(const std::string uri, paramsList *params = new paramsList()) const;
 
-        ~RouterNode() {
+       virtual ~RouterNode() {
             if (children.size() > 0) {
                 //cout << " RouterNode " << origUriPattern << " destructor called " << endl; // never called?
                 children.clear();

@@ -11,15 +11,6 @@
 
 namespace router_lib {
 
-    void FuncParamNode::init(std::string uri) {
-        END_WITH_SLASH = uri.back() == '/';
-        startPos = uri.find(P_START) + 1;
-        prefix = uri.substr(0, startPos);
-
-        std::string pn = uri.substr(uri.find(PLACEHOLDER_START) + 1,
-                               uri.find(PLACEHOLDER_END) - uri.find(PLACEHOLDER_START) - 1);
-        setParamName(pn);
-    }
 
     RouteResult *FuncParamNode::getNodeResult(const std::string uri, paramsList *params) const {
 

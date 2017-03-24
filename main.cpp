@@ -1,9 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include "strlib.h"
-#include "PathParamNode.h"
 #include "RouterNode.h"
-#include "factory.h"
 #include "measure.h"
 
 
@@ -17,13 +15,15 @@ RouteResult *findRt(RouterNode rn, string uri) {
 
 int main() {
 
-    string mstr = "category(widgets)/";
+    string mstr = "category({widgets})/";
 
     string prefix = mstr.substr(0, mstr.find("({") + 1);
     size_t slen = mstr.length();
     size_t startPos = mstr.find("{");
     size_t endPos = mstr.find("}");
+    size_t parenEndPos = mstr.find(")");
     string ph = mstr.substr(mstr.find("(") + 1,   mstr.find(")") - mstr.find("("));
+
 
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     string uri = "users/find/id";
@@ -109,8 +109,8 @@ int main() {
         cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << " ctrl7: " << *ctrl7 << endl;
         cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
 
-    } catch (...) {
-        cout << "SOME EXCEPTION" << endl;
+    } catch (std::invalid_argument e) {
+        cout << "SOME EXCEPTION: " << e.what() << endl;
     }
 
     //string myTest = "blahblah/cool";
@@ -143,7 +143,7 @@ int main() {
     //findRoute(rn, "/api/v2/users");
 
 
-    //cout << "PREFIX=[" << prefix << "]" << " ph=[" << ph << "]" << " len=" << slen << " startPos=" << startPos <<  " endPos=" << endPos << endl;
+    cout << "PREFIX=[" << prefix << "]" << " ph=[" << ph << "]" << " len=" << slen << " startPos=" << startPos <<  " endPos=" << endPos << " parenEndPos=" << parenEndPos<< endl;
 
 
     //std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();

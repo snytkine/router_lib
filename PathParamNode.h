@@ -29,16 +29,14 @@ namespace router_lib {
             setParamName(uri.substr(1, uri.length() - 3));
         }
 
-        virtual std::string getParamName() const;
+        //virtual std::string getParamName() const;
 
 
     protected:
 
-        bool END_WITH_SLASH;
 
-        std::string paramName_;
 
-        virtual void setParamName(std::string pn);
+        //virtual void setParamName(std::string pn);
 
         // This is where the work is done to match uri for this node, possibly extract router params and
         // return a result.

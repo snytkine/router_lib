@@ -9,14 +9,6 @@
 namespace router_lib {
 
 
-    void PathParamNode::setParamName(std::string pn) {
-        paramName_ = pn;
-    }
-
-
-    std::string PathParamNode::getParamName() const {
-        return paramName_;
-    }
 
 
     RouteResult *PathParamNode::getNodeResult(const std::string uri, paramsList *params) const {

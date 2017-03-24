@@ -15,5 +15,10 @@ namespace router_lib {
     static const std::string P_END = ")";
 
     std::string tail_(const std::string s);
+
+    enum class NodeType {
+        BasicNode, ParamNode, FuncNode, CatchAll
+    };
 }
+
 #endif //ROUTER_CONSTANTS_H

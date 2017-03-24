@@ -28,11 +28,9 @@ namespace router_lib {
 
     protected:
 
-        void init(std::string uri);
 
-        std::string prefix;
 
-        int startPos;
+
 
         // This is where the work is done to match uri for this node, possibly extract router params and
         // return a result.

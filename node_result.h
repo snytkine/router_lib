@@ -37,7 +37,9 @@ namespace router_lib {
         }
 
 
-        virtual bool isEmpty() const;
+        virtual bool isEmpty() {
+            return false;
+        };
 
         virtual std::string toString() {
             std::string ret = "RouteResult isEmpty: ";
@@ -75,7 +77,9 @@ namespace router_lib {
 
 
     class EmptyResult : public RouteResult {
-        bool isEmpty() const;
+        bool isEmpty() {
+            return true;
+        }
     };
 
 

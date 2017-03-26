@@ -2,16 +2,15 @@
 #include <ctime>
 #include "strlib.h"
 #include "RouterNode.h"
-#include "measure.h"
 
 
 using namespace std;
 using namespace router_lib;
 
 
-RouteResult *findRt(RouterNode rn, string uri) {
+/*RouteResult *findRt(RouterNode rn, string uri) {
     return rn.findRoute(uri);
-}
+}*/
 
 int main() {
 
@@ -133,11 +132,11 @@ int main() {
         cout << "Controller NOT FOUND " << res->controller_id << endl;
     }*/
 
-    int t = funcTime(findRt, *rootNode, "/api/v1_0/user('mywidgets')/");
+    //int t = funcTime(findRt, *rootNode, "/api/v1_0/user('mywidgets')/");
     //int t2 = funcTime(findRoute, rn, "/api/v2");
     //int t3 = funcTime(findRoute, rn, "/api/v2/users");
 
-    cout << "t1: " << t << "\n";
+    //cout << "t1: " << t << "\n";
     //std::cout<<"t2: "<< t2 <<"\n";
     //std::cout<<"t3: "<< t2 <<"\n";
     //findRoute(rn, "/api/v2/users");

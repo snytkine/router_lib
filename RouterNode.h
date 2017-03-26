@@ -12,10 +12,21 @@
 #include <chrono>
 #include <utility>
 #include "node_result.h"
-#include "constants.h"
 
 
 namespace router_lib {
+
+    static const std::string PATH_SEPARATOR = "/";
+    static const std::string PLACEHOLDER_START = "{";
+    static const std::string PLACEHOLDER_END = "}";
+    static const std::string P_START = "(";
+    static const std::string P_END = ")";
+
+    std::string tail_(const std::string s);
+
+    enum class NodeType {
+        BasicNode, ParamNode, FuncNode, CatchAll
+    };
 
     class RouterNode {
 
@@ -85,6 +96,7 @@ namespace router_lib {
 
         RouteResult *getFuncNodeResult(const std::string uri, paramsList *params = new paramsList()) const;
 
+        static std::string tail_(const std::string s);
     };
 
 }

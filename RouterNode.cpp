@@ -115,21 +115,12 @@ namespace router_lib {
 
         } // no valid placeholders
 
-        /*else {
-            nodeType_ = NodeType::BasicNode;
-        }*/
-
     }
 
     template<class T>
     bool RouterNode<T>::empty() const {
         return empty_;
     }
-
-    /*template<class T>
-    void RouterNode<T>::setController(T *ctrl) {
-        controller = ctrl;
-    }*/
 
     template<class T>
     T RouterNode<T>::getController() const {

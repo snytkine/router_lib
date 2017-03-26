@@ -28,23 +28,26 @@ namespace router_lib {
     public:
 
         paramsList *params;
-        T *controller;
+        T controller;
         std::string restString;
+
 
         RouteResult<T>() {}
 
-        RouteResult<T>(paramsList *p, T *cid = nullptr, std::string rest = "") : restString(rest), controller(cid) {
-            params = p;
+        RouteResult<T>(paramsList *p) : params(p) {}
+
+        RouteResult<T>(paramsList *p, T cid, std::string rest = "") : params(p), controller(cid), restString(rest) {}
+
+
+        virtual bool isEmpty(){
+            return false;
         }
-
-
-        virtual bool isEmpty();
 
         std::string toString() {
             std::string ret = "RouteResult isEmpty: ";
             ret = ret + ((isEmpty()) ? "TRUE" : "FALSE");
             ret = ret + " CID=";
-            if (controller != nullptr) {
+            if (!isEmpty()) {
                 //ret = ret + to_string(*controller);
                 ret = ret + " HAVE CONTROLLER";
             } else {
@@ -76,12 +79,17 @@ namespace router_lib {
 
     template<class T>
     class EmptyResult : public RouteResult<T> {
-        bool isEmpty();
+        bool isEmpty(){
+            return true;
+        }
     };
 
 
-    template class RouteResult<int>;
-    template class EmptyResult<int>;
+    template
+    class RouteResult<int>;
+
+    template
+    class EmptyResult<int>;
 }
 
 #endif //ROUTER_NODE_RESULT_H

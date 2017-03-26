@@ -13,17 +13,17 @@ namespace router_lib {
         // todo check that len of s must be > len of origUriPattern? Do we need this check?
         // is it possible to pass shorter string here?
 
-        // cout << "ENTERED RouterNode::rest with s=[" << s << "] origUriPattern=" << origUriPattern << endl;
+        std::cout << "ENTERED RouterNode::rest with s=[" << s << "]"  << std::endl;
 
 
         std::string ret = s.substr(s.find(PATH_SEPARATOR) + 1, std::string::npos);
 
-        // cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] in NODE  " << controller_name << endl;
+        std::cout << "RouterNode::rest ret[" << ret << "] result for [" << s << "] "  << std::endl;
 
         return ret;
     }
 
-    template <class T>
+    template<class T>
     void RouterNode<T>::init(std::string uri) {
 
         END_WITH_SLASH = uri.back() == '/';
@@ -121,9 +121,9 @@ namespace router_lib {
 
     }
 
-template <class T>
+    template<class T>
     bool RouterNode<T>::empty() const {
-        return controller == nullptr;
+        return empty_;
     }
 
     /*template<class T>
@@ -131,23 +131,26 @@ template <class T>
         controller = ctrl;
     }*/
 
-    template <class T>
-    T *RouterNode<T>::getController() const {
+    template<class T>
+    T RouterNode<T>::getController() const {
         return controller;
     }
 
-    template <class T>
+    template<class T>
     RouteResult<T> *RouterNode<T>::getFuncNodeResult(const std::string uri, paramsList *params) {
 
+        std::cout << "Entered getFuncNodeResult with URI=" << uri << std::endl;
         RouteResult<T> *res = new RouteResult<T>(params);
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
-            // cout << "END_WITH_SLASH" << endl;
+            std::cout << "FuncNode END_WITH_SLASH originalUriPatterh=" << origUriPattern << std::endl;
             if (sepPos == std::string::npos) {
-                // cout << "URI DOES NOT END WITH SLASH" << endl;
+                std::cout << "URI DOES NOT END WITH SLASH" << std::endl;
 
                 return new EmptyResult<T>();
             } else {
+
+                // HERE Our node ends with slash, the uri has slash but may not end with slash
 
                 // LOGIC
                 // uri must end with ")/"
@@ -155,20 +158,30 @@ template <class T>
                 // extract everything from prefix to ")"
 
                 if (!::startsWith(uri, prefix)) {
-                    //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
+                    std::cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << std::endl;
 
                     return new EmptyResult<T>();
                 }
 
-                if (!::endsWith(uri, P_END + PATH_SEPARATOR)) {
-                    //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
+                //
+                if (!::stringContains(uri, P_END + PATH_SEPARATOR)) {
+                    std::cout << "FuncParamNode uri=[" << uri << "] does not contain=[" << (P_END + PATH_SEPARATOR) << "]" << std::endl;
 
                     return new EmptyResult<T>();
+                }
+
+                size_t myEndPos = uri.find(P_END + PATH_SEPARATOR);
+                if(myEndPos == std::string::npos){
+                    std::cout << " uri=" << uri << " Does not have " << (P_END + PATH_SEPARATOR) << " in node originalUriPattern=" << origUriPattern << std::endl;
+                }
+
+                if(myEndPos <= startPos + 1){
+                    std::cout << "myEndPos=" << myEndPos << " startPos=" << startPos << " in originalUriPattern=" << origUriPattern << " uri=" << uri << std::endl;
                 }
 
                 // cout << "URI HAS SLASH" << endl;
                 // extract param manually
-                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, uri.find(P_END) - startPos));
+                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, myEndPos - startPos));
                 // cout << "CP-1" << endl;
                 params->push_back(rp);
                 // cout << "CP-2" << endl;
@@ -186,12 +199,14 @@ template <class T>
                 return res;
             }
         } else {
+            std::cout << "FuncNode DOES NOT END_WITH_SLASH=" << origUriPattern << std::endl;
             // cout << "NOT END_WITH_SLASH" << endl;
             if (sepPos != std::string::npos) {
-                // cout << "URI HAS SLASH" << endl;
+                std::cout << "URI HAS SLASH=" << uri << std::endl;
 
                 return new EmptyResult<T>();
             } else {
+                std::cout << "URI DOES NOT HAVE SLASH=" << uri << std::endl;
                 // LOGIC:
                 // uri must end with ")"
                 // uri must start with prefix
@@ -201,6 +216,7 @@ template <class T>
                 RouteParam *rp = new RouteParam(paramName_, uri);
                 params->push_back(rp);
                 res->params = params;
+                res->restString = tail_(uri);
                 // in case like this there is no need to extract rest because since uri does not have slash the entire uri is a val.
 
 
@@ -210,7 +226,7 @@ template <class T>
 
     }
 
-    template <class T>
+    template<class T>
     RouteResult<T> *RouterNode<T>::getParamNodeResult(const std::string uri, paramsList *params) {
 
         RouteResult<T> *res = new RouteResult<T>(params);
@@ -261,7 +277,7 @@ template <class T>
 
     }
 
-    template <class T>
+    template<class T>
     RouteResult<T> *RouterNode<T>::getNodeResult(const std::string s, paramsList *params) {
 
         // std::cout << "Entered getNodeResult NodeType=[" << (int) nodeType_ << "] looking for " << s << std::endl;

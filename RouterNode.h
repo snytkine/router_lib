@@ -33,25 +33,25 @@ namespace router_lib {
 
     public :
 
-        RouterNode<T>(std::string uri, T *ctrl, std::string name = "") : origUriPattern(uri),
-                                                                         controller_name(name),
-                                                                         controller(ctrl) {
+        RouterNode<T>(std::string uri, T ctrl, std::string name = "") :
+                controller(ctrl),
+                controller_name(name), origUriPattern(uri), empty_(false) {
             init(uri);
             //cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
         }
 
 
-        RouterNode<T>() : origUriPattern("/"), controller_name("ROOT"), controller(), nodeType_(NodeType::BasicNode) {}
+        RouterNode<T>() : nodeType_(NodeType::BasicNode), controller(), controller_name("ROOT"), origUriPattern("/") {}
 
-        RouterNode<T>(std::string uri) : origUriPattern(uri), controller() {
+        RouterNode<T>(std::string uri) : controller(), origUriPattern(uri) {
             init(uri);
         }
 
-        T *getController() const;
+        T getController() const;
 
         bool empty() const;
 
-        void addRoute(std::string uri, T &controller, const std::string name) {
+        void addRoute(std::string uri, T controller, const std::string name) {
 
             // First strip leading slash from uri because we always start with root node
             // which is a node for a slash uri
@@ -102,7 +102,8 @@ namespace router_lib {
                         } else {
                             // cout << "addRoute-CP4" << endl;
                             i->controller_name = name;
-                            i->controller = &controller;
+                            i->controller = controller;
+                            i->empty_ = false;
                             //i->controller = &id;
                             // cout << "addRoute-CP5" << endl;
                             //return i;
@@ -124,7 +125,7 @@ namespace router_lib {
             // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
             if (restUri.empty()) {
-                newNode = new RouterNode<T>(nodeUri, &controller, name); //new RouterNode<T>(nodeUri, id, name);
+                newNode = new RouterNode<T>(nodeUri, controller, name); //new RouterNode<T>(nodeUri, id, name);
                 // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
             } else {
                 newNode = new RouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
@@ -199,11 +200,13 @@ namespace router_lib {
 
         NodeType nodeType_ = NodeType::BasicNode;
 
-        T *controller;
+        T controller;
 
         std::string controller_name;
 
         std::string origUriPattern;
+
+        bool empty_ = true;
 
         std::vector<RouterNode<T> *> children;
 
@@ -230,6 +233,7 @@ namespace router_lib {
 
     };
 
-    template class RouterNode<int>;
+    template
+    class RouterNode<int>;
 }
 #endif //ROUTER_ROUTER_NODE_H

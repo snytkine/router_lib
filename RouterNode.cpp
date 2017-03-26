@@ -123,28 +123,18 @@ namespace router_lib {
 
     RouteResult *RouterNode::getFuncNodeResult(const std::string uri, paramsList *params) const {
 
-        // std::cout << "Entered getFuncNodeResult NodeType=[" << (int) nodeType_ << "] looking for " << uri << std::endl;
-        // If origUriPattern ends with slash
-        //      then if uri does NOT have slash
-        //           -> isEmpty
-        //      else
-        //          -> everything up to slash is extracted val
-        //              get rest() and do same as with RouterNode...
-        // else
-        //      if uri has slash
-        //          -> NOT FOUND
-        //      else
-        //          -> uri IS extracted val and we have result to return!
-        //
+        std::cout << "Entered getFuncNodeResult with URI=" << uri << std::endl;
         RouteResult *res = new RouteResult(params);
         size_t sepPos = uri.find(PATH_SEPARATOR);
         if (END_WITH_SLASH) {
-            // cout << "END_WITH_SLASH" << endl;
+            std::cout << "FuncNode END_WITH_SLASH originalUriPatterh=" << origUriPattern << std::endl;
             if (sepPos == std::string::npos) {
-                // cout << "URI DOES NOT END WITH SLASH" << endl;
+                std::cout << "URI DOES NOT END WITH SLASH" << std::endl;
 
                 return new EmptyResult();
             } else {
+
+                // HERE Our node ends with slash, the uri has slash but may not end with slash
 
                 // LOGIC
                 // uri must end with ")/"
@@ -152,20 +142,23 @@ namespace router_lib {
                 // extract everything from prefix to ")"
 
                 if (!::startsWith(uri, prefix)) {
-                    //cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << endl;
+                    std::cout << "FuncParamNode uri=[" << uri << "] does not start with prefix=[" << prefix << "]" << std::endl;
 
                     return new EmptyResult();
                 }
 
-                if (!::endsWith(uri, P_END + PATH_SEPARATOR)) {
-                    //cout << "FuncParamNode uri=[" << uri << "] does not start end with=[" << (P_END + PATH_SEPARATOR) << "]" << endl;
+                size_t myEndPos = uri.find(P_END + PATH_SEPARATOR);
+                if(myEndPos == std::string::npos){
+                    std::cout << " uri=" << uri << " Does not have " << (P_END + PATH_SEPARATOR) << " in node originalUriPattern=" << origUriPattern << std::endl;
+                }
 
-                    return new EmptyResult();
+                if(myEndPos <= startPos + 1){
+                    std::cout << "myEndPos=" << myEndPos << " startPos=" << startPos << " in originalUriPattern=" << origUriPattern << " uri=" << uri << std::endl;
                 }
 
                 // cout << "URI HAS SLASH" << endl;
                 // extract param manually
-                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, uri.find(P_END) - startPos));
+                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, myEndPos - startPos));
                 // cout << "CP-1" << endl;
                 params->push_back(rp);
                 // cout << "CP-2" << endl;
@@ -183,21 +176,34 @@ namespace router_lib {
                 return res;
             }
         } else {
+            std::cout << "FuncNode DOES NOT END_WITH_SLASH=" << origUriPattern << std::endl;
             // cout << "NOT END_WITH_SLASH" << endl;
             if (sepPos != std::string::npos) {
-                // cout << "URI HAS SLASH" << endl;
+                std::cout << "URI HAS SLASH=" << uri << std::endl;
 
                 return new EmptyResult();
             } else {
+                std::cout << "URI DOES NOT HAVE SLASH=" << uri << std::endl;
                 // LOGIC:
                 // uri must end with ")"
                 // uri must start with prefix
                 // extract everything from prefix to ")"
 
                 // cout << "URI ALSO DOES NOT HAVE SLASH" << endl;
-                RouteParam *rp = new RouteParam(paramName_, uri);
+
+                size_t myEndPos = uri.find(P_END);
+                if(myEndPos == std::string::npos){
+                    std::cout << " uri=" << uri << " Does not have " << (P_END) << " in node originalUriPattern=" << origUriPattern << std::endl;
+                }
+
+                if(myEndPos <= startPos + 1){
+                    std::cout << "FuncNode myEndPos=" << myEndPos << " startPos=" << startPos << " in originalUriPattern=" << origUriPattern << " uri=" << uri << std::endl;
+                }
+
+                RouteParam *rp = new RouteParam(paramName_, uri.substr(startPos, myEndPos - startPos));
                 params->push_back(rp);
                 res->params = params;
+                //res->restString = tail_(uri);
                 // in case like this there is no need to extract rest because since uri does not have slash the entire uri is a val.
 
 

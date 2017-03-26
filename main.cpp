@@ -68,7 +68,8 @@ int main() {
     int route12 = 12;
 
     try {
-        /*rootNode->addRoute("api/v2_0/users/user/", route5, "user");
+        ///api/v1_0/user/123
+        rootNode->addRoute("api/v2_0/users/user/", route5, "user");
 
 
         rootNode->addRoute("myapi/v1_0/users/user/", route6, "userX");
@@ -77,6 +78,8 @@ int main() {
 
 
         rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
+        //rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
+        //
         rootNode->addRoute("api/v1_0/users/user/", route5, "user");
 
         rootNode->addRoute("api/v1_0/user({id})/", route8, "users/()");
@@ -85,8 +88,11 @@ int main() {
         rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12,
                            "api/v1_0/items/{item_id}/{user_id}/ok.get");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "api/v1_0/items/{item_id}/");*/
-        rootNode->addRoute("api/v3_0/user({user_id})/ok", 13, "oData");
+        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "api/v1_0/items/{item_id}/");
+        //rootNode->addRoute("api/v3_0/user({user_id})/ok", 13, "oData");
+        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
+
+        //rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
 
 
 
@@ -99,7 +105,8 @@ int main() {
         //RouteResult<int> *res6 = rootNode->findRoute("/api/v1_0/items/563/ok.get");
         //RouteResult<int> *res7 = rootNode->findRoute("/api/v1_0/items/77777/264/ok.get");
         //RouteResult<int> *res8 = rootNode->findRoute("/api/v1_0/user('mywidgets')/");
-        RouteResult<int> *res9 = rootNode->findRoute("/api/v3_0/user('ba')/ok");
+       // RouteResult<int> *res9 = rootNode->findRoute("/api/v3_0/user('ba')/ok");
+        RouteResult<int> *res10 = rootNode->findRoute("/api/v4_0/books/user('dada')/333");
 
         //int ctrl7;
         // cast raw pointer void* controller to an int since we know it was an int)
@@ -118,9 +125,11 @@ int main() {
         //cout << "RES-6 route /api/v1_0/items/563/ok.get: " << res6->toString() << endl;
         //cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << " ctrl7: " << ctrl7 << endl;
         //cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
-        cout << "RES-9 route /api/v3_0/user('ba')/ok: " << res9->toString() << endl;
+//        cout << "RES-9 route /api/v3_0/user('ba')/ok: " << res9->toString() << endl;
+        cout << "RES-10 route /api/v4_0/user('data'): " << res10->toString() << endl;
 
     } catch (std::invalid_argument e) {
+        cout << "~~~~~~~~~ EXCEPTION ~~~~~~~~~~~~~~" << endl;
         cout << "SOME EXCEPTION: " << e.what() << endl;
     }
 
@@ -144,11 +153,11 @@ int main() {
         cout << "Controller NOT FOUND " << res->controller_id << endl;
     }*/
 
-    int t = funcTime(findRt, *rootNode, "/api/v1_0/user('mywidgets')/");
+    //int t = funcTime(findRt, *rootNode, "/api/v1_0/user('mywidgets')/");
     //int t2 = funcTime(findRoute, rn, "/api/v2");
     //int t3 = funcTime(findRoute, rn, "/api/v2/users");
 
-    cout << "t1: " << t << "\n";
+    //cout << "t1: " << t << "\n";
     //std::cout<<"t2: "<< t2 <<"\n";
     //std::cout<<"t3: "<< t2 <<"\n";
     //findRoute(rn, "/api/v2/users");

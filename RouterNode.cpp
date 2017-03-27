@@ -134,6 +134,28 @@ namespace router_lib {
         return &controllers;
     }
 
+
+    template<class T>
+    void RouterNode<T>::totalNodes(int &counter) {
+
+        //counter++;
+        int ts = children.size();
+        std::cout << "\n~~~~~~~ENTERED totalNodes in node=[" << origUriPattern << "] with counter="
+                  << std::to_string(counter) << " Total Childres in node=" << ts
+                  << std::endl;
+
+
+        if (ts > 0) {
+            counter += ts;
+            for (auto &&i: children) {
+                i->totalNodes(counter);
+            }
+        }
+
+        std::cout << "RETURNING counter=" << counter << " from=[" << origUriPattern << "]" << std::endl;
+        return;
+    }
+
     template<class T>
     RouteResult<T> *RouterNode<T>::getFuncNodeResult(const std::string uri, paramsList *params) {
 
@@ -165,12 +187,12 @@ namespace router_lib {
                 size_t myEndPos = uri.find(P_END + PATH_SEPARATOR);
                 if (myEndPos == std::string::npos) {
                     // std::cout << " funcNode CP:231 uri=" << uri << " Does not have " << (P_END + PATH_SEPARATOR)
-                     //         << " in node originalUriPattern=" << origUriPattern << std::endl;
+                    //         << " in node originalUriPattern=" << origUriPattern << std::endl;
                 }
 
                 if (myEndPos <= startPos + 1) {
                     // std::cout << "funcNode CP::232 myEndPos=" << myEndPos << " startPos=" << startPos << " in originalUriPattern="
-                      //        << origUriPattern << " uri=" << uri << std::endl;
+                    //        << origUriPattern << " uri=" << uri << std::endl;
                 }
 
                 // std::cout << " funcNode CP:777 URI HAS SLASH" << std::endl;
@@ -219,7 +241,7 @@ namespace router_lib {
 
                 if (myEndPos <= startPos + 1) {
                     // std::cout << "FuncNode myEndPos=" << myEndPos << " startPos=" << startPos
-                     //         << " in originalUriPattern=" << origUriPattern << " uri=" << uri << std::endl;
+                    //         << " in originalUriPattern=" << origUriPattern << " uri=" << uri << std::endl;
 
                     return new EmptyResult<T>();
                 }

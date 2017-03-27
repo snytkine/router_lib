@@ -73,13 +73,12 @@ int main() {
 
 
         rootNode->addRoute("myapi/v1_0/users/user/", route6, "GET", "userX");
-
+/*
         rootNode->addRoute("api/v1_0/users/user", route4, "GET", "userY");
 
 
         rootNode->addRoute("api/v1_0/users/user/123", route3, "GET", "user123");
-        //rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
-        //
+
         rootNode->addRoute("api/v1_0/users/user/", route5, "GET", "user");
 
         rootNode->addRoute("api/v1_0/user({id})/", route8, "GET", "users/()");
@@ -90,13 +89,16 @@ int main() {
 
         rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "GET", "api/v1_0/items/{item_id}/");
         //rootNode->addRoute("api/v3_0/user({user_id})/ok", 13, "oData");
-        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oData");
+        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oData");*/
 
         //rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
 
 
 
         cout << '\n' << '\n' << "=================" << '\n' << '\n' << endl;
+        int totalNodes = 1;
+        rootNode->totalNodes(totalNodes);
+        cout << "Num Routes=" <<  to_string(totalNodes) << endl;
         //RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
         //RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
         //RouteResult<int> *res3 = rootNode->findRoute("/api/v1_0/users");

@@ -54,6 +54,8 @@ namespace router_lib {
 
         bool empty() const;
 
+        virtual void totalNodes(int &counter);
+
 
         static void addContollerToNode(RouterNode<T> *node, TController<T> ctrl) {
 

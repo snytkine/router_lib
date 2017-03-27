@@ -26,6 +26,11 @@ namespace router_lib {
         BasicNode, ParamNode, FuncNode, CatchAll
     };
 
+    enum class HTTP_METHOD {
+        GET, POST, PUT, DELETE, HEAD, TRACE, CONNECT, OPTIONS
+    };
+
+
     std::string tail_(const std::string s);
 
     template<class T>
@@ -51,7 +56,7 @@ namespace router_lib {
 
         bool empty() const;
 
-        void addRoute(std::string uri, T controller, const std::string name) {
+        void addRoute(std::string uri, T controller, std::string http_method, const std::string name) {
 
             // First strip leading slash from uri because we always start with root node
             // which is a node for a slash uri
@@ -113,7 +118,9 @@ namespace router_lib {
                         // First section of uri matched this child node
                         // but we have "restUri" of the uri
                         // in this case child node is not going to be used...
-                        i->addRoute(restUri, controller, name);
+                        i->addRoute(restUri, controller, http_method, name);
+
+                        return;
                     }
                 }
 
@@ -125,12 +132,12 @@ namespace router_lib {
             // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
             if (restUri.empty()) {
-                newNode = new RouterNode<T>(nodeUri, controller, name); //new RouterNode<T>(nodeUri, id, name);
+                newNode = new RouterNode<T>(nodeUri, controller, http_method, name); //new RouterNode<T>(nodeUri, id, name);
                 // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
             } else {
                 newNode = new RouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
                 // cout << "       Created new NODE_NC for URI=" << nodeUri << endl;
-                newNode->addRoute(restUri, controller, name);
+                newNode->addRoute(restUri, controller, http_method, name);
             }
 
 
@@ -200,7 +207,7 @@ namespace router_lib {
 
         NodeType nodeType_ = NodeType::BasicNode;
 
-        T controller;
+        std::vector<T> controllers;
 
         std::string controller_name;
 

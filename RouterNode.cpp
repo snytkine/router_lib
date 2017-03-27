@@ -283,6 +283,7 @@ namespace router_lib {
                 std::cout << "getParamNodeResult CP:54537 URI ALSO DOES NOT HAVE SLASH" << std::endl;
 
                 return res;
+
             }
         }
 

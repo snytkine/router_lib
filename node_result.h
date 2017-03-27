@@ -29,9 +29,8 @@ namespace router_lib {
     public:
 
         paramsList *params;
-        std::vector<TController<T>>* controllers;
+        std::vector<TController<T>>* controllers = new std::vector<TController<T>>();
         std::string restString;
-
 
         RouteResult<T>() {}
 
@@ -51,14 +50,14 @@ namespace router_lib {
             if (!isEmpty()) {
                 //ret = ret + to_string(*controller);
                 ret = ret + " HAVE CONTROLLERS FOR:";
-                //if(controllers->size() > 0) {
-                    //ret = ret + " NUM CONTROLLERS: " + std::to_string(controllers->size());
-                    //for (auto &&ctrl: *controllers) {
-                        //ret = ret + http_method_to_string(ctrl.httpMethod);
-                    //}
-                //} else {
-                    //ret = ret + " NO CONTROLLERS IN RESULT ";
-                //}
+                if(controllers->size() > 0) {
+                    ret = ret + " NUM CONTROLLERS: " + std::to_string(controllers->size());
+                    for (auto &&ctrl: *controllers) {
+                        ret = ret + http_method_to_string(ctrl.httpMethod);
+                    }
+                } else {
+                    ret = ret + " NO CONTROLLERS IN RESULT ";
+                }
             } else {
                 ret = ret + " NO CONTROLLER ";
             }

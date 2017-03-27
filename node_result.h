@@ -48,12 +48,14 @@ namespace router_lib {
             ret = ret + ((isEmpty()) ? "TRUE" : "FALSE");
             ret = ret + " CID=";
             if (!isEmpty()) {
-                //ret = ret + to_string(*controller);
-                ret = ret + " HAVE CONTROLLERS FOR:";
                 if(controllers->size() > 0) {
-                    ret = ret + " NUM CONTROLLERS: " + std::to_string(controllers->size());
+                //ret = ret + to_string(*controller);
+                ret = ret + "\nNUM CONTROLLERS: " + std::to_string(controllers->size());
+                ret = ret + "\nHAVE CONTROLLERS FOR:";
+
+
                     for (auto &&ctrl: *controllers) {
-                        ret = ret + http_method_to_string(ctrl.httpMethod);
+                        ret = ret + "\n" + http_method_to_string(ctrl.httpMethod) + " ctrlName=[" + ctrl.name + "]";
                     }
                 } else {
                     ret = ret + " NO CONTROLLERS IN RESULT ";

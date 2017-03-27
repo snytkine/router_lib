@@ -163,56 +163,58 @@ namespace router_lib {
 
         RouteResult<T> *findRoute(const std::string s, paramsList *params = new paramsList()) {
 
-            std::cout << " Entered  RouterNode::findRoute Node: " << origUriPattern << " looking for: " << s
-                      << std::endl;
+            // std::cout << " Entered  RouterNode::findRoute Node: " << origUriPattern << " looking for: " << s
+             //         << std::endl;
             RouteResult<T> *res;
 
             switch (nodeType_) {
 
                 case NodeType::ParamNode:
                     res = getParamNodeResult(s, params);
+                    // std::cout << "GET res from getParamNodeResult 88463" << std::endl;
                     break;
 
                 case NodeType::FuncNode:
                     res = getFuncNodeResult(s, params);
+                    // std::cout << "GET res from getFuncNodeResult 98799" << std::endl;
                     break;
 
                 case NodeType::BasicNode:
                 default:
                     res = getNodeResult(s, params);
-                    std::cout << "GET res from getNodeResult 43842" << std::endl;
+                    // std::cout << "GET res from getNodeResult 43842" << std::endl;
                     break;
 
             }
 
             if (res->isEmpty()) {
 
-                std::cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << std::endl;
+                // std::cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << std::endl;
 
                 return res;
 
             } else if (res->restString.length() == 0) {
-                std::cout << " RouterNode::findRoute Result found. controller_id:"
-                          << std::to_string(res->controllers->size()) << std::endl;
+                // std::cout << " RouterNode::findRoute Result found. number of controllers:"
+                 //         << std::to_string(res->controllers->size()) << std::endl;
                 return res;
             } else if (children.size() > 0) {
-                std::cout
-                        << " NODE with originalUriPattern=[" + origUriPattern + "] has children. Will look in children"
-                        << std::endl;
+                // std::cout
+                //        << " NODE with originalUriPattern=[" + origUriPattern + "] has children. Will look in children"
+                 //       << std::endl;
                 for (auto &&i : children) {
-                    std::cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << std::endl;
+                    // std::cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << std::endl;
                     auto cres = i->findRoute(res->restString, params);
                     if (!cres->isEmpty() && cres->restString.length() == 0) {
 
                         return cres;
                     }
                 }
-                std::cout << "NONE OF THE CHILDRED HAD A RESULT" << std::endl;
+                // std::cout << "NONE OF THE CHILDRED HAD A RESULT" << std::endl;
             } else {
-                std::cout << " RouterNode::findRoute Result NOT found and NODE does not have children" << std::endl;
+                // std::cout << " RouterNode::findRoute Result NOT found and NODE does not have children" << std::endl;
             }
 
-            std::cout << "RETURNING DEFAULT EMPTY RESULT" << std::endl;
+            // std::cout << "RETURNING DEFAULT EMPTY RESULT" << std::endl;
 
 
             return new EmptyResult<T>();

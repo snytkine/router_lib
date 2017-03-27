@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "t_controller.h"
 
 namespace router_lib {
 
@@ -28,7 +29,7 @@ namespace router_lib {
     public:
 
         paramsList *params;
-        T controller;
+        std::vector<TController<T>>* controllers;
         std::string restString;
 
 
@@ -36,7 +37,7 @@ namespace router_lib {
 
         RouteResult<T>(paramsList *p) : params(p) {}
 
-        RouteResult<T>(paramsList *p, T cid, std::string rest = "") : params(p), controller(cid), restString(rest) {}
+        RouteResult<T>(paramsList *p, std::vector<TController<T>>* ctrls, std::string rest = "") : params(p), controllers(ctrls), restString(rest) {}
 
 
         virtual bool isEmpty(){
@@ -49,7 +50,15 @@ namespace router_lib {
             ret = ret + " CID=";
             if (!isEmpty()) {
                 //ret = ret + to_string(*controller);
-                ret = ret + " HAVE CONTROLLER";
+                ret = ret + " HAVE CONTROLLERS FOR:";
+                //if(controllers->size() > 0) {
+                    //ret = ret + " NUM CONTROLLERS: " + std::to_string(controllers->size());
+                    //for (auto &&ctrl: *controllers) {
+                        //ret = ret + http_method_to_string(ctrl.httpMethod);
+                    //}
+                //} else {
+                    //ret = ret + " NO CONTROLLERS IN RESULT ";
+                //}
             } else {
                 ret = ret + " NO CONTROLLER ";
             }

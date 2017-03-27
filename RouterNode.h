@@ -12,9 +12,12 @@
 #include <chrono>
 #include <utility>
 #include "node_result.h"
+#include "http_methods.h"
+#include "t_controller.h"
 
 
 namespace router_lib {
+
 
     static const std::string PATH_SEPARATOR = "/";
     static const std::string PLACEHOLDER_START = "{";
@@ -26,10 +29,6 @@ namespace router_lib {
         BasicNode, ParamNode, FuncNode, CatchAll
     };
 
-    enum class HTTP_METHOD {
-        GET, POST, PUT, DELETE, HEAD, TRACE, CONNECT, OPTIONS
-    };
-
 
     std::string tail_(const std::string s);
 
@@ -38,23 +37,41 @@ namespace router_lib {
 
     public :
 
-        RouterNode<T>(std::string uri, T ctrl, std::string name = "") :
-                controller(ctrl),
-                controller_name(name), origUriPattern(uri), empty_(false) {
+        RouterNode<T>(std::string uri, TController<T> ctrl, std::string name = "") :
+                controllers{ctrl}, origUriPattern(uri) {
             init(uri);
             //cout << "CREATED NODE for uri=[" << uri << "] origUriPattern=[" << origUriPattern << "]" << endl;
         }
 
 
-        RouterNode<T>() : nodeType_(NodeType::BasicNode), controller(), controller_name("ROOT"), origUriPattern("/") {}
+        RouterNode<T>() : nodeType_(NodeType::BasicNode), origUriPattern("/") {}
 
-        RouterNode<T>(std::string uri) : controller(), origUriPattern(uri) {
+        RouterNode<T>(std::string uri) : origUriPattern(uri) {
             init(uri);
         }
 
-        T getController() const;
+        std::vector<TController<T>> *getControllers();
 
         bool empty() const;
+
+
+        static void addContollerToNode(RouterNode<T> *node, TController<T> ctrl) {
+
+            if (node->children.empty()) {
+                node->controllers.push_back(ctrl);
+            } else {
+                for (TController<T> &i: node->controllers) {
+                    if (i.httpMethod == ctrl.httpMethod) {
+                        throw std::invalid_argument("Controller for method " + http_method_to_string(ctrl.httpMethod) +
+                                                    " Already exists in node " + node->origUriPattern);
+                    }
+                }
+
+                node->controllers.push_back(ctrl);
+            }
+
+        }
+
 
         void addRoute(std::string uri, T controller, std::string http_method, const std::string name) {
 
@@ -87,52 +104,50 @@ namespace router_lib {
                 nodeUri = uri;
             }
 
-            // Adding new node Always works on children because we always start with root node
-            for (auto &&i : children) {
-                // cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " EMPTY=" << i->empty() << " CTRL-NAME=" << i->controller_name << endl;
-                if (i->origUriPattern == nodeUri) {
+            try {
+                // Adding new node Always works on children because we always start with root node
+                for (auto &&i : children) {
+                    // cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " EMPTY=" << i->empty() << " CTRL-NAME=" << i->controller_name << endl;
+                    if (i->origUriPattern == nodeUri) {
 
-                    // cout << "addRoute-CP1" << endl;
-                    // restUri is empty means we are adding a controller
-                    // to existing node that did not have controller before
-                    if (restUri.empty()) {
-                        // cout << "addRoute-CP2" << endl;
-                        if (!i->empty()) {
-                            // cout << "addRoute-CP3 empty=" << i->empty() << endl;
+                        // cout << "addRoute-CP1" << endl;
+                        // restUri is empty means we are adding a controller
+                        // to existing node that did not have controller before
+                        if (restUri.empty()) {
+                            // cout << "addRoute-CP2" << endl;
 
-                            // An existing Node can be a controller node
-                            // but we now adding another node to it
+                            // new way - Just call addControllerToNode, it will add ctrl or throw
+                            addContollerToNode(i, TController<T>{name, str_to_method(http_method), controller});
 
-                            throw std::invalid_argument("Route already added for same uri: " + uri);
+                            // end old way
                         } else {
-                            // cout << "addRoute-CP4" << endl;
-                            i->controller_name = name;
-                            i->controller = controller;
-                            i->empty_ = false;
-                            //i->controller = &id;
-                            // cout << "addRoute-CP5" << endl;
-                            //return i;
+                            // cout << "addRoute-CP6" << endl;
+                            // First section of uri matched this child node
+                            // but we have "restUri" of the uri
+                            // in this case child node is not going to be used...
+                            i->addRoute(restUri, controller, http_method, name);
+
+                            return;
                         }
-                    } else {
-                        // cout << "addRoute-CP6" << endl;
-                        // First section of uri matched this child node
-                        // but we have "restUri" of the uri
-                        // in this case child node is not going to be used...
-                        i->addRoute(restUri, controller, http_method, name);
-
-                        return;
                     }
-                }
 
+                } // end for each child
+            } catch (std::invalid_argument e) {
+                std::string reason = e.what();
+                throw std::invalid_argument("Failed to add Route for uri=" + uri + " Error: " + reason);
             }
+
 
             // cout << "addRoute-CP7" << endl;
             // newNode uri did not match any of children origUriPattern
             // in this case add new Node to childred
             // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
+            newNode = new RouterNode<T>(nodeUri);
+
+
             if (restUri.empty()) {
-                newNode = new RouterNode<T>(nodeUri, controller, http_method, name); //new RouterNode<T>(nodeUri, id, name);
+                addContollerToNode(newNode, TController<T>{name, str_to_method(http_method), controller});
                 // cout << "       Created new NODE with EMPTY=" << newNode->empty() << " for id: " << id << " URI=" << nodeUri << " PN: " << newNode->getParamName() << endl;
             } else {
                 newNode = new RouterNode<T>(nodeUri); //new RouterNode<T>(nodeUri);
@@ -148,7 +163,8 @@ namespace router_lib {
 
         RouteResult<T> *findRoute(const std::string s, paramsList *params = new paramsList()) {
 
-            // cout << " Entered  RouterNode::findRoute Node: " << origOrigPattern << " looking for: " << s << endl;
+            std::cout << " Entered  RouterNode::findRoute Node: " << origUriPattern << " looking for: " << s
+                      << std::endl;
             RouteResult<T> *res;
 
             switch (nodeType_) {
@@ -164,33 +180,39 @@ namespace router_lib {
                 case NodeType::BasicNode:
                 default:
                     res = getNodeResult(s, params);
+                    std::cout << "GET res from getNodeResult 43842" << std::endl;
                     break;
 
             }
 
             if (res->isEmpty()) {
 
-                // cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << endl;
+                std::cout << " RouterNode::findRoute Result isEmpty:" << res->isEmpty() << std::endl;
 
                 return res;
 
             } else if (res->restString.length() == 0) {
-                // cout << " RouterNode::findRoute Result found. controller_id:" << *res->controller << endl;
+                std::cout << " RouterNode::findRoute Result found. controller_id:"
+                          << std::to_string(res->controllers->size()) << std::endl;
                 return res;
             } else if (children.size() > 0) {
+                std::cout
+                        << " NODE with originalUriPattern=[" + origUriPattern + "] has children. Will look in children"
+                        << std::endl;
                 for (auto &&i : children) {
-                    // cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << endl;
+                    std::cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << std::endl;
                     auto cres = i->findRoute(res->restString, params);
                     if (!cres->isEmpty() && cres->restString.length() == 0) {
+
                         return cres;
                     }
                 }
-                // cout << "NONE OF THE CHILDRED HAD A RESULT" << endl;
+                std::cout << "NONE OF THE CHILDRED HAD A RESULT" << std::endl;
             } else {
-                // cout << " RouterNode::findRoute Result NOT found and NODE does not have children" << endl;
+                std::cout << " RouterNode::findRoute Result NOT found and NODE does not have children" << std::endl;
             }
 
-            // cout << "RETURNING DEFAULT EMPTY RESULT" << endl;
+            std::cout << "RETURNING DEFAULT EMPTY RESULT" << std::endl;
 
 
             return new EmptyResult<T>();
@@ -207,13 +229,13 @@ namespace router_lib {
 
         NodeType nodeType_ = NodeType::BasicNode;
 
-        std::vector<T> controllers;
+        std::vector<TController<T>> controllers;
 
-        std::string controller_name;
+        //std::string controller_name;
 
         std::string origUriPattern;
 
-        bool empty_ = true;
+        //bool empty_ = true;
 
         std::vector<RouterNode<T> *> children;
 
@@ -224,6 +246,8 @@ namespace router_lib {
         std::string prefix;
 
         void init(std::string uri);
+
+        //void init(std::string uri, T ctrl);
 
         size_t startPos;
 

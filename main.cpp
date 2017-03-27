@@ -69,28 +69,28 @@ int main() {
 
     try {
         ///api/v1_0/user/123
-        rootNode->addRoute("api/v2_0/users/user/", route5, "user");
+        rootNode->addRoute("api/v2_0/users/user/", route5, "GET", "user");
 
 
-        rootNode->addRoute("myapi/v1_0/users/user/", route6, "userX");
+        rootNode->addRoute("myapi/v1_0/users/user/", route6, "GET", "userX");
 
-        rootNode->addRoute("api/v1_0/users/user", route4, "userY");
+        rootNode->addRoute("api/v1_0/users/user", route4, "GET", "userY");
 
 
-        rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
+        rootNode->addRoute("api/v1_0/users/user/123", route3, "GET", "user123");
         //rootNode->addRoute("api/v1_0/users/user/123", route3, "user123");
         //
-        rootNode->addRoute("api/v1_0/users/user/", route5, "user");
+        rootNode->addRoute("api/v1_0/users/user/", route5, "GET", "user");
 
-        rootNode->addRoute("api/v1_0/user({id})/", route8, "users/()");
+        rootNode->addRoute("api/v1_0/user({id})/", route8, "GET", "users/()");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "api/v1_0/items/{item_id}/ok.get");
-        rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12,
+        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "GET", "api/v1_0/items/{item_id}/ok.get");
+        rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12, "GET",
                            "api/v1_0/items/{item_id}/{user_id}/ok.get");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "api/v1_0/items/{item_id}/");
+        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "GET", "api/v1_0/items/{item_id}/");
         //rootNode->addRoute("api/v3_0/user({user_id})/ok", 13, "oData");
-        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
+        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oData");
 
         //rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
 
@@ -126,7 +126,7 @@ int main() {
         //cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << " ctrl7: " << ctrl7 << endl;
         //cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
 //        cout << "RES-9 route /api/v3_0/user('ba')/ok: " << res9->toString() << endl;
-        cout << "RES-10 route /api/v4_0/user('data'): " << res10->toString() << endl;
+        cout << "RES-10 route /api/v4_0/books/user('dada')/333: " << res10->toString() << endl;
 
     } catch (std::invalid_argument e) {
         cout << "~~~~~~~~~ EXCEPTION ~~~~~~~~~~~~~~" << endl;

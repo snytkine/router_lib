@@ -138,12 +138,7 @@ namespace router_lib {
     template<class T>
     void RouterNode<T>::totalNodes(int &counter) {
 
-        //counter++;
         int ts = children.size();
-        std::cout << "\n~~~~~~~ENTERED totalNodes in node=[" << origUriPattern << "] with counter="
-                  << std::to_string(counter) << " Total Childres in node=" << ts
-                  << std::endl;
-
 
         if (ts > 0) {
             counter += ts;
@@ -152,8 +147,21 @@ namespace router_lib {
             }
         }
 
-        std::cout << "RETURNING counter=" << counter << " from=[" << origUriPattern << "]" << std::endl;
-        return;
+    }
+
+    //void totalControllers(int &counter)
+    template<class T>
+    void RouterNode<T>::totalControllers(int &counter) {
+
+        counter+= controllers.size();
+        int ts = children.size();
+
+        if (ts > 0) {
+            for (auto &&i: children) {
+                i->totalControllers(counter);
+            }
+        }
+
     }
 
     template<class T>

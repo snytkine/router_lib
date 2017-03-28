@@ -73,23 +73,26 @@ int main() {
 
 
         rootNode->addRoute("myapi/v1_0/users/user/", route6, "GET", "userX");
-/*
+
         rootNode->addRoute("api/v1_0/users/user", route4, "GET", "userY");
 
 
         rootNode->addRoute("api/v1_0/users/user/123", route3, "GET", "user123");
 
-        rootNode->addRoute("api/v1_0/users/user/", route5, "GET", "user");
+        rootNode->addRoute("api/v1_0/users/user/", route5, "GET", "user A");
+
+        //rootNode->addRoute("api/v1_0/users/user/", route5, "GET", "user DDD");
 
         rootNode->addRoute("api/v1_0/user({id})/", route8, "GET", "users/()");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "GET", "api/v1_0/items/{item_id}/ok.get");
+        rootNode->addRoute("api/v1_0/items/{item_id}/ok.get", route11, "GET", "Z api/v1_0/items/{item_id}/ok.get");
         rootNode->addRoute("api/v1_0/items/{item_id}/{user_id}/ok.get", route12, "GET",
-                           "api/v1_0/items/{item_id}/{user_id}/ok.get");
+                           "Z1 api/v1_0/items/{item_id}/{user_id}/ok.get");
 
-        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "GET", "api/v1_0/items/{item_id}/");
+        rootNode->addRoute("api/v1_0/items/{item_id}/", route9, "GET", "Z2 api/v1_0/items/{item_id}/");
         //rootNode->addRoute("api/v3_0/user({user_id})/ok", 13, "oData");
-        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oData");*/
+        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oDataX");
+        rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "POST", "oDataX-POST");
 
         //rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
 
@@ -98,7 +101,14 @@ int main() {
         cout << '\n' << '\n' << "=================" << '\n' << '\n' << endl;
         int totalNodes = 1;
         rootNode->totalNodes(totalNodes);
-        cout << "Num Routes=" <<  to_string(totalNodes) << endl;
+        cout << "Num Nodes=" <<  to_string(totalNodes) << endl;
+
+
+        cout << '\n' << '\n' << "+++++++++++++++++" << '\n' << '\n' << endl;
+        int totalControllers = 0;
+        rootNode->totalControllers(totalControllers);
+        cout << "Num Controllers=" <<  to_string(totalControllers) << endl;
+
         //RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
         //RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
         //RouteResult<int> *res3 = rootNode->findRoute("/api/v1_0/users");
@@ -128,7 +138,12 @@ int main() {
         //cout << "RES-7 route api/v1_0/items/{item_id}/{user_id}/ok.get: " << res7->toString() << " ctrl7: " << ctrl7 << endl;
         //cout << "RES-8 route /api/v1_0/user('mywidgets')/: " << res8->toString() << endl;
 //        cout << "RES-9 route /api/v3_0/user('ba')/ok: " << res9->toString() << endl;
-        cout << "RES-10 route /api/v4_0/books/user('dada')/333: " << res10->toString() << endl;
+
+        //std::tuple<TController<int>, std::string> tpl10 = res10->forMethod("GET");
+        TController<int> ctrl10 = res10->forMethod("GET");
+        std::string ctrl10name = ctrl10.name;
+        cout << "???" << endl;
+        cout << "RES-10 route /api/v4_0/books/user('dada')/333: " << res10->toString() << "\n ?GET CTRL=[" <<  ctrl10name << "] Supported methods:"  << res10->getSupportedMethods() << endl;
 
     } catch (std::invalid_argument e) {
         cout << "~~~~~~~~~ EXCEPTION ~~~~~~~~~~~~~~" << endl;

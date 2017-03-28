@@ -15,7 +15,6 @@
 #include "http_methods.h"
 #include "t_controller.h"
 
-
 namespace router_lib {
 
 
@@ -34,6 +33,7 @@ namespace router_lib {
 
     template<class T>
     class RouterNode {
+
 
     public :
 
@@ -56,21 +56,26 @@ namespace router_lib {
 
         virtual void totalNodes(int &counter);
 
+        virtual void totalControllers(int &counter);
+
 
         static void addContollerToNode(RouterNode<T> *node, TController<T> ctrl) {
 
-            if (node->children.empty()) {
+            if (node->controllers.empty()) {
                 node->controllers.push_back(ctrl);
             } else {
                 for (TController<T> &i: node->controllers) {
                     if (i.httpMethod == ctrl.httpMethod) {
-                        throw std::invalid_argument("Controller for method " + http_method_to_string(ctrl.httpMethod) +
-                                                    " Already exists in node " + node->origUriPattern);
+                        throw std::invalid_argument("Controller (" + ctrl.name+ ") for method " + http_method_to_string(ctrl.httpMethod) +
+                                                    " Already exists for node " + node->origUriPattern + " Existing Route Name (" + i.name + ")");
                     }
                 }
 
                 node->controllers.push_back(ctrl);
             }
+
+            /*std::cout << "@@@@@@@@@@@@@@@@ ADDED CONTROLLER " << ctrl.name << " TO NODE " << node->origUriPattern
+                      << std::endl;*/
 
         }
 
@@ -106,38 +111,36 @@ namespace router_lib {
                 nodeUri = uri;
             }
 
-            try {
-                // Adding new node Always works on children because we always start with root node
-                for (auto &&i : children) {
-                    // cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " EMPTY=" << i->empty() << " CTRL-NAME=" << i->controller_name << endl;
-                    if (i->origUriPattern == nodeUri) {
 
-                        // cout << "addRoute-CP1" << endl;
-                        // restUri is empty means we are adding a controller
-                        // to existing node that did not have controller before
-                        if (restUri.empty()) {
-                            // cout << "addRoute-CP2" << endl;
+            // Adding new node Always works on children because we always start with root node
+            for (auto &&i : children) {
+                // cout << " Checking child " << i->origUriPattern << " for router pattern " << uri << " EMPTY=" << i->empty() << " CTRL-NAME=" << i->controller_name << endl;
+                if (i->origUriPattern == nodeUri) {
 
-                            // new way - Just call addControllerToNode, it will add ctrl or throw
-                            addContollerToNode(i, TController<T>{name, str_to_method(http_method), controller});
+                    // cout << "addRoute-CP1" << endl;
+                    // restUri is empty means we are adding a controller
+                    // to existing node that did not have controller before
+                    if (restUri.empty()) {
+                        // cout << "addRoute-CP2" << endl;
 
-                            // end old way
-                        } else {
-                            // cout << "addRoute-CP6" << endl;
-                            // First section of uri matched this child node
-                            // but we have "restUri" of the uri
-                            // in this case child node is not going to be used...
-                            i->addRoute(restUri, controller, http_method, name);
+                        // new way - Just call addControllerToNode, it will add ctrl or throw
+                        addContollerToNode(i, TController<T>{name, str_to_method(http_method), controller});
 
-                            return;
-                        }
+                        return;
+                        // end old way
+                    } else {
+                        // cout << "addRoute-CP6" << endl;
+                        // First section of uri matched this child node
+                        // but we have "restUri" of the uri
+                        // in this case child node is not going to be used...
+                        i->addRoute(restUri, controller, http_method, name);
+
+                        return;
                     }
+                }
 
-                } // end for each child
-            } catch (std::invalid_argument e) {
-                std::string reason = e.what();
-                throw std::invalid_argument("Failed to add Route for uri=" + uri + " Error: " + reason);
-            }
+            } // end for each child
+
 
 
             // cout << "addRoute-CP7" << endl;
@@ -166,7 +169,7 @@ namespace router_lib {
         RouteResult<T> *findRoute(const std::string s, paramsList *params = new paramsList()) {
 
             // std::cout << " Entered  RouterNode::findRoute Node: " << origUriPattern << " looking for: " << s
-             //         << std::endl;
+            //         << std::endl;
             RouteResult<T> *res;
 
             switch (nodeType_) {
@@ -197,12 +200,12 @@ namespace router_lib {
 
             } else if (res->restString.length() == 0) {
                 // std::cout << " RouterNode::findRoute Result found. number of controllers:"
-                 //         << std::to_string(res->controllers->size()) << std::endl;
+                //         << std::to_string(res->controllers->size()) << std::endl;
                 return res;
             } else if (children.size() > 0) {
                 // std::cout
                 //        << " NODE with originalUriPattern=[" + origUriPattern + "] has children. Will look in children"
-                 //       << std::endl;
+                //       << std::endl;
                 for (auto &&i : children) {
                     // std::cout << " Looking in Child [" << i->origUriPattern << "] for " << res->restString << std::endl;
                     auto cres = i->findRoute(res->restString, params);
@@ -228,6 +231,7 @@ namespace router_lib {
                 children.clear();
             }
         }
+
 
     protected:
 
@@ -267,6 +271,7 @@ namespace router_lib {
         RouteResult<T> *getFuncNodeResult(const std::string uri, paramsList *params = new paramsList());
 
     };
+
 
     template
     class RouterNode<int>;

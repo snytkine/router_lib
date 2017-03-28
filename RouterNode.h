@@ -37,6 +37,7 @@ namespace router_lib {
 
     public :
 
+
         RouterNode<T>(std::string uri, TController<T> ctrl, std::string name = "") :
                 controllers{ctrl}, origUriPattern(uri) {
             init(uri);
@@ -58,6 +59,9 @@ namespace router_lib {
 
         virtual void totalControllers(int &counter);
 
+        std::vector<RouterNode<T> *> getChildres() {
+            return children;
+        }
 
         static void addContollerToNode(RouterNode<T> *node, TController<T> ctrl) {
 
@@ -66,8 +70,10 @@ namespace router_lib {
             } else {
                 for (TController<T> &i: node->controllers) {
                     if (i.httpMethod == ctrl.httpMethod) {
-                        throw std::invalid_argument("Controller (" + ctrl.name+ ") for method " + http_method_to_string(ctrl.httpMethod) +
-                                                    " Already exists for node " + node->origUriPattern + " Existing Route Name (" + i.name + ")");
+                        throw std::invalid_argument(
+                                "Controller (" + ctrl.name + ") for method " + http_method_to_string(ctrl.httpMethod) +
+                                " Already exists for node " + node->origUriPattern + " Existing Route Name (" + i.name +
+                                ")");
                     }
                 }
 
@@ -149,7 +155,7 @@ namespace router_lib {
             // cout << "Not matched in children of " << origUriPattern << " For uri: " << uri << endl;
 
             newNode = new RouterNode<T>(nodeUri);
-
+            std::cout << " ~~~~~~~~~~~~ CREATED NODE ~~~~~~~~~~~~~" << std::endl;
 
             if (restUri.empty()) {
                 addContollerToNode(newNode, TController<T>{name, str_to_method(http_method), controller});

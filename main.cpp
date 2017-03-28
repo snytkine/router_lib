@@ -6,6 +6,7 @@
 //#include "RouterNodeInt.h"
 #include "RouterNode.h"
 #include "measure.h"
+#include "counter.h"
 
 
 
@@ -69,12 +70,16 @@ int main() {
 
     try {
         ///api/v1_0/user/123
-        rootNode->addRoute("api/v2_0/users/user/", route5, "GET", "user");
+        rootNode->addRoute("api/ok/bla/", route5, "GET", "user");
+        rootNode->addRoute("api/ok/na/kk/gg", route5, "GET", "user");
+        rootNode->addRoute("api/ok/na/kk/ok", route5, "GET", "user");
+        rootNode->addRoute("api/ok/na/dd/gg", route5, "GET", "user");
+        rootNode->addRoute("api/ok/na/cc/gg", route5, "GET", "user");
 
 
-        rootNode->addRoute("myapi/v1_0/users/user/", route6, "GET", "userX");
-
-        rootNode->addRoute("api/v1_0/users/user", route4, "GET", "userY");
+        //rootNode->addRoute("myapi/v1_0/users/user/", route6, "GET", "userX");
+/*
+        rootNode->addRoute("api/v1_0/users/user", route4,/ "GET", "userY");
 
 
         rootNode->addRoute("api/v1_0/users/user/123", route3, "GET", "user123");
@@ -94,7 +99,7 @@ int main() {
         rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "GET", "oDataX");
         rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "POST", "oDataX-POST");
 
-        //rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
+        *///rootNode->addRoute("api/v4_0/{my_category}/user({user_id})/{item_id}", 14, "oData");
 
 
 
@@ -108,6 +113,11 @@ int main() {
         int totalControllers = 0;
         rootNode->totalControllers(totalControllers);
         cout << "Num Controllers=" <<  to_string(totalControllers) << endl;
+
+        cout << '\n' << '\n' << "+++++++++++++++++" << '\n' << '\n' << endl;
+        //int myTotalNodee = 0;
+        int myTotalX = getNodesCount<int>(rootNode);
+        cout << "myTotalX=" <<  myTotalX << endl;
 
         //RouteResult<int> *res = rootNode->findRoute("/api/v3_0/users/user/123");
         //RouteResult<int> *res2 = rootNode->findRoute("/api/v1_0/users/user");
